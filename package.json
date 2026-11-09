@@ -1,0 +1,12 @@
+{
+  "name": "vanshavali",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared family tree (Vanshavali) with Hindi and English, self-hosted",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "COOKIE_SECURE=false DATA_DIR=./data node server.js"
+  },
+  "engines": { "node": ">=20" }
+}
