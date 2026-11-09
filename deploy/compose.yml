@@ -8,8 +8,10 @@ services:
     build: ..
     restart: unless-stopped
     environment:
-      FAMILY_PASSCODE: ${FAMILY_PASSCODE:?FAMILY_PASSCODE is missing from .env (run ./install.sh)}
+      EDIT_CODE: ${EDIT_CODE:?EDIT_CODE is missing from .env (run ./install.sh)}
       SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is missing from .env (run ./install.sh)}
+      # optional: set a passcode in .env to stop people without it from even viewing
+      FAMILY_PASSCODE: ${FAMILY_PASSCODE:-}
     volumes:
       - data:/data
     networks:

@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "COOKIE_SECURE=false DATA_DIR=./data node server.js"
+    "dev": "COOKIE_SECURE=false EDIT_CODE=123456 DATA_DIR=./data node server.js"
   },
   "engines": { "node": ">=20" }
 }

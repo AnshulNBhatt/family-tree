@@ -9,7 +9,7 @@ open anyone's card for their details and relationships, and switch the whole app
   साला/साली, भाभी/जीजा, भतीजा/भांजा, चचेरे/ममेरे/फुफेरे/मौसेरे भाई-बहन, and so on.
 - Square photo per person (resized in the browser to 320×320 JPEG).
 - Live updates: everyone with the page open sees changes immediately.
-- One family passcode protects the whole tree. Anyone with the passcode can view and edit.
+- Anyone with the link can view; changing anything needs a 6-digit edit code.
 - Built for phones first: on a phone the **Family** view shows one person with their parents above and spouse,
   children and siblings below as large tappable cards (tap anyone to move to them). The **Tree** view shows
   everyone at once with pinch-zoom. Details and forms open full-screen with a sticky Back bar and Save button.
@@ -30,35 +30,44 @@ Data is stored in `DATA_DIR` (`/data` in Docker): `state.json` for people and re
 
 ```bash
 npm run dev            # http://localhost:3000, no passcode, data in ./data
-FAMILY_PASSCODE=test npm run dev
+# edit code for local runs: 123456
 ```
 
 Opening `app/index.html` directly as a file also works. It then saves only in that browser.
 
 ## Deploy on the Curiosand droplet (143.110.189.112)
 
-The family tree runs as its **own** Docker Compose project (`vanshavali`) with its own data volume. It shares
-only Curiosand's Caddy, which already owns ports 80/443 and the HTTPS certificates. `install.sh` adds one site
-block to Curiosand's `Caddyfile` and reloads Caddy without restarting anything.
+No domain, DNS or Cloudflare needed. The address is a free `sslip.io` name that points straight at the
+server's IP (`https://family.143-110-189-112.sslip.io`), and Curiosand's Caddy gets the HTTPS certificate.
+The family tree runs as its own Docker Compose project (`vanshavali`) with its own data. It only adds one
+site block to Curiosand's `Caddyfile` and reloads Caddy; Curiosand itself is not restarted.
 
-1. **Cloudflare DNS:** add an `A` record, name `family` (or whatever subdomain you want), value
-   `143.110.189.112`, proxied (orange cloud).
-2. **Deploy key** (on the server, in Termius). GitHub allows one repo per deploy key, so this repo gets its own:
-   ```bash
-   ssh-keygen -t ed25519 -N "" -C "vanshavali-server" -f ~/.ssh/github_family && cat ~/.ssh/github_family.pub
-   ```
-   On GitHub: **family-tree → Settings → Deploy keys → Add deploy key**, paste the line, leave write access off.
-   Then:
-   ```bash
-   printf 'Host github-family\n  HostName github.com\n  IdentityFile ~/.ssh/github_family\n  IdentitiesOnly yes\n' >> ~/.ssh/config
-   git clone -b claude/vanshavali-app git@github-family:AnshulNBhatt/family-tree.git ~/vanshavali
-   ```
-3. **Install:**
-   ```bash
-   cd ~/vanshavali/deploy && ./install.sh family.curiosand.com
-   ```
-   It asks you to choose the family passcode, starts the app, and adds the address to Caddy.
-4. Open `https://family.curiosand.com` and enter the passcode.
+In Termius on the server (put your 6-digit edit code in place of `<6-digit-code>`):
+
+```bash
+git clone -b claude/vanshavali-app https://github.com/AnshulNBhatt/family-tree.git ~/vanshavali
+EDIT_CODE=<6-digit-code> ~/vanshavali/deploy/install.sh
+```
+
+The script prints the address and the edit code when it's done. Share the address with the family; give the
+code only to the people who should be able to edit.
+
+The clone command above needs the repo to be public (it holds only code: the family's data and the edit code
+live only on the server). To keep it private instead, give the server a read-only deploy key first:
+`ssh-keygen -t ed25519 -N "" -f ~/.ssh/github_family && cat ~/.ssh/github_family.pub`, add that line under
+**family-tree → Settings → Deploy keys**, then
+`printf 'Host github-family\n  HostName github.com\n  IdentityFile ~/.ssh/github_family\n' >> ~/.ssh/config`
+and clone from `git@github-family:AnshulNBhatt/family-tree.git` instead.
+
+### Who can do what
+
+- **Anyone with the link** can see the whole tree and everyone's details.
+- **Editing** (adding people, changing details, photos, links) needs the 6-digit edit code. Tap the lock
+  button (or **Edit** in the bottom bar on a phone), enter the code once, and that phone or computer stays
+  unlocked. Tap the lock again to lock it. The server refuses any change without the code, and stops
+  accepting guesses after 8 wrong tries from one place (15 minutes) or 100 in total (an hour).
+- Optional: to stop people without a passcode from even viewing, add `FAMILY_PASSCODE=something` to
+  `~/vanshavali/deploy/.env` and run `cd ~/vanshavali/deploy && docker compose up -d`.
 
 ### Later
 
@@ -66,10 +75,10 @@ block to Curiosand's `Caddyfile` and reloads Caddy without restarting anything.
 cd ~/vanshavali/deploy && ./update.sh    # get the latest version (a few seconds, data kept)
 cd ~/vanshavali/deploy && ./backup.sh    # save everything to deploy/backups/
 docker compose logs -f                   # see what the app is doing (run inside ~/vanshavali/deploy)
-nano .env                                # change the passcode, then: docker compose up -d
 ```
 
-Changing the passcode signs everyone out, and they'll need the new one.
+To change the edit code: `EDIT_CODE=123456 ~/vanshavali/deploy/install.sh` (everyone who had editing
+unlocked will need the new code).
 
 **Note for Curiosand updates:** `install.sh` appends a block to `~/curiosand/deploy/Caddyfile`. If a future
 Curiosand update also changes that file, `git pull` there will refuse to run. To fix it:

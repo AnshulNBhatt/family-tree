@@ -24,7 +24,7 @@
   --edge:#7D8D88; --dot:#222C29; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;
 }
 [hidden]{display:none!important}
-html,body{height:100%}
+html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;overflow:hidden}
 *{box-sizing:border-box}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -50,6 +50,21 @@ button{-webkit-tap-highlight-color:transparent}
 .icon-btn{display:none;width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);align-items:center;justify-content:center;cursor:pointer;flex:none;padding:0}
 .icon-btn svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round}
 .icon-btn[aria-expanded="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.lockbtn{display:inline-flex;width:auto;min-width:44px;gap:6px;padding:0 12px;font-weight:700;font-size:13.5px;color:var(--ink)}
+.lockbtn[hidden]{display:none!important}
+.lockbtn .ic-open{display:none}
+.lockbtn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.lockbtn.on .ic-open{display:block;stroke:var(--accent)}
+.lockbtn.on .ic-locked{display:none}
+.modal{position:fixed;inset:0;z-index:40;background:rgba(10,20,18,.45);display:grid;place-items:center;padding:16px}
+.modal-box{width:100%;max-width:360px;background:var(--surface);border-radius:16px;padding:22px 20px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.modal-box h2{font-family:var(--f-display);font-weight:400;font-size:22px;line-height:1.3;margin:0}
+.modal-box p{margin:0;color:var(--muted);font-size:14.5px}
+#codeIn{width:100%;font-size:28px!important;letter-spacing:.35em;text-align:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);font-variant-numeric:tabular-nums}
+#codeIn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap}
+.modal-actions .btn{min-height:46px;flex:1 1 120px}
+.viewonly{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px dashed var(--line);border-radius:10px;font-size:14px;color:var(--muted)}
 .search{position:relative;flex:0 1 260px;min-width:150px}
 .search input{width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
 .search input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
@@ -170,6 +185,8 @@ button{-webkit-tap-highlight-color:transparent}
   .brand h1{font-size:19px}
   .viewtog,#addPersonBtn{display:none}
   .icon-btn{display:inline-flex}
+  .lockbtn{padding:0;width:44px}
+  .lockbtn .lb-text{display:none}
   .search{display:none;position:absolute;left:0;right:0;top:100%;padding:8px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow);min-width:0}
   .bar.searching .search{display:block}
   .search input{min-height:46px}
@@ -300,6 +317,7 @@ fieldset[data-pick] .check:has(input:checked){border-color:var(--accent);backgro
       <input id="q" type="search" autocomplete="off">
       <div class="results" id="results" hidden></div>
     </div>
+    <button class="icon-btn lockbtn" id="editBtn" type="button" hidden><svg class="ic-locked" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"></rect><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"></path></svg><svg class="ic-open" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"></rect><path d="M8 10.5V7.5a4 4 0 0 1 7.6-1.7"></path></svg><span class="lb-text"></span></button>
     <button class="icon-btn" id="searchBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5 21 21"></path></svg></button>
     <button class="btn primary" id="addPersonBtn" type="button" data-t="add_person"></button>
   </header>
@@ -355,6 +373,15 @@ fieldset[data-pick] .check:has(input:checked){border-color:var(--accent);backgro
 
     <aside class="panel" id="panel" hidden><div class="panel-inner" id="panelBody"></div></aside>
     <div class="toast" id="toast" hidden role="status"></div>
+    <div class="modal" id="unlock" hidden role="dialog" aria-modal="true" aria-labelledby="unTitle">
+      <form class="modal-box" id="unlockForm" novalidate>
+        <h2 id="unTitle" data-t="unlock_title"></h2>
+        <p data-t="unlock_text"></p>
+        <input id="codeIn" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="••••••">
+        <span class="pass-err" id="codeErr" role="alert"></span>
+        <div class="modal-actions"><button class="btn primary" type="submit" data-t="unlock_btn"></button><button class="btn ghost" type="button" id="unCancel" data-t="cancel"></button></div>
+      </form>
+    </div>
   </main>
   <nav class="tabbar" id="tabbar">
     <button type="button" data-view="family"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="3"></circle><circle cx="5.5" cy="18" r="2.6"></circle><circle cx="18.5" cy="18" r="2.6"></circle><path d="M12 9v4M5.5 15.4V13h13v2.4"></path></svg><span data-t="view_family"></span></button>
@@ -371,6 +398,12 @@ fieldset[data-pick] .check:has(input:checked){border-color:var(--accent);backgro
 const STR = {
   en: {
     title: "Vanshavali", add_person: "+ Add person", search_ph: "Find a person",
+    unlock_title: "Enter the edit code", unlock_text: "Anyone with the link can look at the tree. To add or change anything, enter the 6-digit code your family shared with you.",
+    unlock_btn: "Unlock editing", code_wrong: "That code isn't right. Try again.", code_short: "The code has 6 digits.",
+    edit_on: "Editing unlocked on this device", edit_off: "Editing locked on this device", lock_edit: "Lock editing", unlock_edit: "Unlock editing",
+    edit_word: "Edit", editing_word: "Editing", tab_edit: "Edit", e_edit_required: "Enter the edit code to make changes.",
+    view_only_note: "You're viewing. Have the edit code?", empty_locked: "No one has been added yet. Enter the edit code to start the tree.",
+    st_live_view: "Live · view only", st_live_edit: "Live · editing on",
     view_family: "Family", view_tree: "Tree", tab_add: "Add", search: "Search", back: "Back", back_to: "Back to {n}",
     full_details: "Details & relatives", see_in_tree: "See in tree", edit_short: "Edit",
     sec_grandparents: "Grandparents", sec_parents: "Parents", sec_spouse: "Spouse", sec_children: "Children",
@@ -426,6 +459,12 @@ const STR = {
   },
   hi: {
     title: "वंशावली", add_person: "+ व्यक्ति जोड़ें", search_ph: "व्यक्ति खोजें",
+    unlock_title: "बदलाव का कोड डालें", unlock_text: "लिंक वाला कोई भी वृक्ष देख सकता है। कुछ जोड़ने या बदलने के लिए परिवार से मिला 6 अंकों का कोड डालें।",
+    unlock_btn: "बदलाव चालू करें", code_wrong: "कोड सही नहीं है। फिर से कोशिश करें।", code_short: "कोड 6 अंकों का है।",
+    edit_on: "इस डिवाइस पर बदलाव चालू", edit_off: "इस डिवाइस पर बदलाव बंद", lock_edit: "बदलाव बंद करें", unlock_edit: "बदलाव चालू करें",
+    edit_word: "बदलें", editing_word: "बदलाव चालू", tab_edit: "बदलें", e_edit_required: "बदलाव के लिए कोड डालें।",
+    view_only_note: "आप केवल देख रहे हैं। बदलाव का कोड है?", empty_locked: "अभी तक कोई नहीं जोड़ा गया है। वृक्ष शुरू करने के लिए बदलाव का कोड डालें।",
+    st_live_view: "लाइव · केवल देखना", st_live_edit: "लाइव · बदलाव चालू",
     view_family: "परिवार", view_tree: "वृक्ष", tab_add: "जोड़ें", search: "खोजें", back: "वापस", back_to: "{n} पर वापस",
     full_details: "विवरण और रिश्तेदार", see_in_tree: "वृक्ष में देखें", edit_short: "बदलें",
     sec_grandparents: "दादा-दादी / नाना-नानी", sec_parents: "माता-पिता", sec_spouse: "जीवनसाथी", sec_children: "संतान",
@@ -639,6 +678,7 @@ function serverStore() {
     try { r = await fetch("api/" + path, { method, credentials: "same-origin", headers: body ? { "content-type": "application/json" } : {}, body: body ? JSON.stringify(body) : undefined }); }
     catch (e) { throw { code: "unavailable" }; }
     if (r.status === 401) { showPasscode(); throw { code: "auth" }; }
+    if (r.status === 403) throw { code: "edit_required" };
     if (r.status === 413) throw { code: "too_large" };
     if (r.status === 507) throw { code: "quota_exceeded" };
     if (!r.ok) throw { code: "unavailable" };
@@ -680,9 +720,18 @@ function localStore() {
 }
 
 function setStatus(kind, key) { statusKind = kind; statusKey = key; $("#status").className = "status " + kind; $("#statusText").textContent = t(key); }
+const liveKey = () => mode === "server" ? (writable ? "st_live_edit" : "st_live_view") : "st_live";
 function applyWritable() {
   $("#addPersonBtn").hidden = !writable || mode === "locked";
-  $("#ovBtn").hidden = !(writable && loaded.people && people.size === 0 && mode !== "locked");
+  const eb = $("#editBtn");
+  eb.hidden = mode !== "server";
+  eb.classList.toggle("on", writable);
+  eb.setAttribute("aria-label", t(writable ? "lock_edit" : "unlock_edit")); eb.title = t(writable ? "lock_edit" : "unlock_edit");
+  eb.querySelector(".lb-text").textContent = t(writable ? "editing_word" : "edit_word");
+  $("#tabAdd").querySelector("[data-t]").textContent = t(writable || mode !== "server" ? "tab_add" : "tab_edit");
+  const canStart = loaded.people && people.size === 0 && mode !== "locked" && (writable || mode === "server");
+  $("#ovBtn").hidden = !canStart;
+  $("#ovBtn").textContent = t(writable ? "add_first" : "unlock_btn");
 }
 
 async function boot() {
@@ -721,7 +770,7 @@ function applyServerState(st) {
   loaded.people = true; changed();
 }
 async function bootServer(session) {
-  mode = "server"; store = serverStore();
+  mode = "server"; store = serverStore(); writable = !!session.canEdit;
   if (session.needPasscode && !session.ok) { showPasscode(); return; }
   startServerSync();
 }
@@ -731,11 +780,11 @@ async function startServerSync() {
     const r = await fetch("api/state", { credentials: "same-origin" });
     if (r.status === 401) { showPasscode(); return; }
     applyServerState(await r.json());
-    setStatus("live", "st_live");
+    setStatus("live", liveKey());
   } catch (e) { setStatus("warn", "st_offline"); }
   if (es) es.close();
   es = new EventSource("api/events");
-  es.onmessage = (ev) => { try { applyServerState(JSON.parse(ev.data)); setStatus("live", "st_live"); } catch (e) {} };
+  es.onmessage = (ev) => { try { applyServerState(JSON.parse(ev.data)); setStatus("live", liveKey()); } catch (e) {} };
   es.onerror = () => { setStatus("warn", "st_reconnecting"); };
 }
 function showPasscode() {
@@ -764,6 +813,7 @@ async function run(fn, okMsg) {
     else if (code === "quota_exceeded") toast(t("e_quota"), true);
     else if (code === "too_large") toast(t("e_too_large"), true);
     else if (code === "auth") toast(t("e_auth"), true);
+    else if (code === "edit_required") { setWritable(false); toast(t("e_edit_required"), true); openUnlock(); return false; }
     else toast(t("e_generic"), true);
     if (mode === "server" && code !== "auth") startServerSync();
     return false;
@@ -784,7 +834,7 @@ function renderOverlay() {
     $("#ovTitle").textContent = t(ovState === "still" ? "still_title" : "loading_title");
     $("#ovText").textContent = t(ovState === "still" ? "still_text" : "loading_text");
   } else if (people.size === 0) {
-    ov.hidden = false; $("#ovTitle").textContent = t("empty_title"); $("#ovText").textContent = t(writable ? "empty_w" : "empty_r");
+    ov.hidden = false; $("#ovTitle").textContent = t("empty_title"); $("#ovText").textContent = t(writable ? "empty_w" : mode === "server" ? "empty_locked" : "empty_r");
   } else ov.hidden = true;
 }
 function renderAll() {
@@ -809,7 +859,7 @@ function applyLang() {
   $("#statusText").textContent = t(statusKey);
   $("#searchBtn").setAttribute("aria-label", t("search")); $("#searchBtn").title = t("search");
   $("#viewTog").setAttribute("aria-label", t("view_family") + " / " + t("view_tree"));
-  renderOverlay(); rebuildIndex(); renderTree(); renderFamily(); renderPanel(); renderResults();
+  renderOverlay(); rebuildIndex(); renderTree(); renderFamily(); renderPanel(); renderResults(); applyWritable();
 }
 /* ---------- views ---------- */
 function setView(v, opts = {}) {
@@ -1365,6 +1415,7 @@ function renderPanel() {
         <button class="btn ghost wide" type="button" data-act="link">${esc(t("link_existing"))}</button>
       </div>
     </section>` : ""}
+    ${!writable && mode === "server" ? `<div class="viewonly"><span>${esc(t("view_only_note"))}</span><button class="btn" type="button" data-act="unlock">${esc(t("unlock_btn"))}</button></div>` : ""}
     ${p.updatedAt ? `<p class="note">${esc(t("last_updated", { d: new Date(p.updatedAt).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", { day: "numeric", month: "short", year: "numeric" }) }))}</p>` : ""}`;
 }
 function biField(k, p, prefix, opts = {}) {
@@ -1490,6 +1541,7 @@ body.addEventListener("click", async (e) => {
   if (act === "close") { panelMode = "view"; closePanel(); }
   else if (act === "cancel") { panelMode = "view"; renderPanel(); }
   else if (act === "edit") { panelMode = "edit"; renderPanel(); }
+  else if (act === "unlock") { openUnlock(); }
   else if (act === "add") { panelMode = "add:" + tg.dataset.rel; renderPanel(); }
   else if (act === "link") { panelMode = "link"; renderPanel(); }
   else if (act === "go") { select(tg.dataset.id); }
@@ -1613,13 +1665,44 @@ function toAvatar(file) {
 /* ================= toolbar ================= */
 const openNew = () => { sel = null; panelMode = "new"; renderTree(); renderPanel(); };
 $("#addPersonBtn").onclick = openNew;
-$("#tabAdd").onclick = () => { if (focus && people.has(focus) && writable) { select(focus); requestAnimationFrame(() => { const g = body.querySelector(".add-grid"); if (g) g.scrollIntoView({ block: "start", behavior: "smooth" }); }); } else openNew(); };
+$("#tabAdd").onclick = () => { if (!writable && mode === "server") return openUnlock(); if (focus && people.has(focus) && writable) { select(focus); requestAnimationFrame(() => { const g = body.querySelector(".add-grid"); if (g) g.scrollIntoView({ block: "start", behavior: "smooth" }); }); } else openNew(); };
 $("#searchBtn").onclick = () => {
   const bar = $(".bar"), on = !bar.classList.contains("searching");
   bar.classList.toggle("searching", on); $("#searchBtn").setAttribute("aria-expanded", String(on));
   if (on) qIn.focus(); else { qIn.value = ""; results.hidden = true; }
 };
-$("#ovBtn").onclick = openNew;
+$("#ovBtn").onclick = () => (writable ? openNew() : openUnlock());
+function setWritable(v) {
+  writable = v;
+  if (!v && (panelMode !== "view")) { panelMode = "view"; }
+  if (mode === "server" && statusKind === "live") setStatus("live", liveKey());
+  applyWritable(); renderOverlay(); renderFamily(); renderPanel();
+}
+function openUnlock() {
+  const m = $("#unlock"); m.hidden = false; $("#codeIn").value = ""; $("#codeErr").textContent = "";
+  requestAnimationFrame(() => $("#codeIn").focus());
+}
+const closeUnlock = () => { $("#unlock").hidden = true; };
+$("#unCancel").onclick = closeUnlock;
+$("#unlock").addEventListener("click", (e) => { if (e.target.id === "unlock") closeUnlock(); });
+$("#codeIn").addEventListener("input", (e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 6); $("#codeErr").textContent = ""; });
+$("#unlockForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const code = $("#codeIn").value;
+  if (code.length !== 6) { $("#codeErr").textContent = t("code_short"); return; }
+  const btn = e.target.querySelector("button[type=submit]"); btn.disabled = true;
+  try {
+    const r = await fetch("api/unlock", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ code }) });
+    if (r.ok) { closeUnlock(); setWritable(true); toast(t("edit_on")); }
+    else { $("#codeErr").textContent = t(r.status === 429 ? "pass_many" : "code_wrong"); $("#codeIn").select(); }
+  } catch (err) { $("#codeErr").textContent = t("e_generic"); }
+  finally { btn.disabled = false; }
+});
+$("#editBtn").onclick = async () => {
+  if (!writable) return openUnlock();
+  try { await fetch("api/lock", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: "{}" }); } catch (e) {}
+  setWritable(false); toast(t("edit_off"));
+};
 const qIn = $("#q"), results = $("#results");
 function renderResults() {
   const q = qIn.value.trim().toLowerCase();
@@ -1638,8 +1721,13 @@ results.addEventListener("click", (e) => {
   if (viewMode === "family" && isPhone()) { closePanel(); setFocus(b.dataset.id); } else { select(b.dataset.id); centerOn(b.dataset.id); }
 });
 document.addEventListener("pointerdown", (e) => { if (!e.target.closest(".search") && !e.target.closest("#searchBtn")) { results.hidden = true; if (!qIn.value) { $(".bar").classList.remove("searching"); $("#searchBtn").setAttribute("aria-expanded", "false"); } } });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !panel.hidden && !e.target.closest("input,textarea,select")) { if (panelMode === "view" || panelMode === "new") closePanel(); else { panelMode = "view"; renderPanel(); } } });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#unlock").hidden) { closeUnlock(); return; } if (e.key === "Escape" && !panel.hidden && !e.target.closest("input,textarea,select")) { if (panelMode === "view" || panelMode === "new") closePanel(); else { panelMode = "view"; renderPanel(); } } });
 
+// the app is one fixed screen: when the keyboard closes, undo any page shift the browser made to show a text box
+document.addEventListener("focusout", () => requestAnimationFrame(() => {
+  const a = document.activeElement;
+  if (!(a && a.matches && a.matches("input,textarea,select")) && (window.scrollY || document.documentElement.scrollTop)) window.scrollTo(0, 0);
+}));
 let toastT = 0;
 function toast(msg, err) { const el2 = $("#toast"); el2.textContent = msg; el2.className = "toast" + (err ? " err" : ""); el2.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (el2.hidden = true), err ? 5000 : 2400); }
 

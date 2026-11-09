@@ -5,7 +5,9 @@
  *   state.json        people + relationships (+ which people have photos)
  *   photos/<id>.jpg   one small square photo per person
  * Every open page gets live updates over server-sent events (/api/events).
- * If FAMILY_PASSCODE is set, the tree can only be opened with that passcode.
+ * Anyone with the link can view the tree. Changing anything needs EDIT_CODE (a 6-digit code):
+ * entering it once on a device unlocks editing there (an HttpOnly cookie).
+ * Optional: if FAMILY_PASSCODE is set, even viewing needs that passcode.
  */
 const http = require("http");
 const fs = require("fs");
@@ -15,6 +17,7 @@ const crypto = require("crypto");
 const PORT = Number(process.env.PORT) || 3000;
 const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(__dirname, "data"));
 const PASSCODE = process.env.FAMILY_PASSCODE || "";
+const EDIT_CODE = String(process.env.EDIT_CODE || "").trim();
 const SESSION_SECRET = process.env.SESSION_SECRET || crypto.createHash("sha256").update("vanshavali:" + PASSCODE).digest("hex");
 const COOKIE_SECURE = process.env.COOKIE_SECURE !== "false";
 const MAX_BODY = 2 * 1024 * 1024;
@@ -96,6 +99,8 @@ function cleanPerson(body) {
 
 /* ---------- auth ---------- */
 const sessionToken = () => crypto.createHmac("sha256", SESSION_SECRET).update("session-v1:" + PASSCODE).digest("base64url");
+const editToken = () => crypto.createHmac("sha256", SESSION_SECRET).update("edit-v1:" + EDIT_CODE).digest("base64url");
+const cookie = (name, value, maxAge) => `${name}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${COOKIE_SECURE ? "; Secure" : ""}`;
 function cookies(req) {
   const out = {};
   for (const part of (req.headers.cookie || "").split(";")) {
@@ -109,17 +114,21 @@ function safeEqual(a, b) {
   return crypto.timingSafeEqual(ha, hb);
 }
 const authed = (req) => !PASSCODE || safeEqual(cookies(req).vt || "", sessionToken());
+const canEdit = (req) => !!EDIT_CODE && safeEqual(cookies(req).ve || "", editToken());
 const attempts = new Map(); // ip -> {n, until}
 function clientIp(req) { return String(req.headers["x-forwarded-for"] || "").split(",")[0].trim() || req.socket.remoteAddress || "?"; }
+let globalFails = { n: 0, reset: 0 };
 function tooMany(ip) {
   const a = attempts.get(ip), now = Date.now();
+  if (globalFails.reset > now && globalFails.n >= 100) return true; // at most 100 wrong guesses per hour in total
   if (!a || a.reset < now) return false;
-  return a.n >= 10;
+  return a.n >= 8;
 }
 function noteFailure(ip) {
   const now = Date.now(); const a = attempts.get(ip);
-  if (!a || a.reset < now) attempts.set(ip, { n: 1, reset: now + 10 * 60 * 1000 });
+  if (!a || a.reset < now) attempts.set(ip, { n: 1, reset: now + 15 * 60 * 1000 });
   else a.n++;
+  if (globalFails.reset < now) globalFails = { n: 1, reset: now + 60 * 60 * 1000 }; else globalFails.n++;
 }
 setInterval(() => { const now = Date.now(); for (const [ip, a] of attempts) if (a.reset < now) attempts.delete(ip); }, 60000).unref();
 
@@ -169,20 +178,32 @@ async function handle(req, res) {
   if ((p === "/" || p === "/index.html") && (m === "GET" || m === "HEAD")) return send(res, 200, page(), "text/html; charset=utf-8");
   if (!p.startsWith("/api/")) return send(res, 404, "Not found", "text/plain");
 
-  if (p === "/api/session" && m === "GET") return send(res, 200, { needPasscode: !!PASSCODE, ok: authed(req) });
+  if (p === "/api/session" && m === "GET") return send(res, 200, { needPasscode: !!PASSCODE, ok: authed(req), canEdit: authed(req) && canEdit(req), editCode: !!EDIT_CODE });
   if (p === "/api/login" && m === "POST") {
     const ip = clientIp(req);
     if (tooMany(ip)) return send(res, 429, { error: "too_many" });
     const body = await readJson(req);
     if (!PASSCODE || (body && typeof body.passcode === "string" && safeEqual(body.passcode.trim(), PASSCODE))) {
-      const cookie = `vt=${sessionToken()}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${180 * 24 * 3600}${COOKIE_SECURE ? "; Secure" : ""}`;
-      return send(res, 200, { ok: true }, undefined, { "Set-Cookie": cookie });
+      return send(res, 200, { ok: true }, undefined, { "Set-Cookie": cookie("vt", sessionToken(), 180 * 24 * 3600) });
     }
     noteFailure(ip);
     return send(res, 401, { error: "wrong_passcode" });
   }
 
   if (!authed(req)) return send(res, 401, { error: "passcode_required" });
+
+  if (p === "/api/unlock" && m === "POST") {
+    const ip = clientIp(req);
+    if (tooMany(ip)) return send(res, 429, { error: "too_many" });
+    const body = await readJson(req);
+    const code = body && typeof body.code === "string" ? body.code.replace(/\s/g, "") : "";
+    if (EDIT_CODE && safeEqual(code, EDIT_CODE)) return send(res, 200, { ok: true }, undefined, { "Set-Cookie": cookie("ve", editToken(), 365 * 24 * 3600) });
+    noteFailure(ip);
+    return send(res, 401, { error: "wrong_code" });
+  }
+  if (p === "/api/lock" && m === "POST") return send(res, 200, { ok: true }, undefined, { "Set-Cookie": cookie("ve", "", 0) });
+  // every change needs the edit code; reading does not
+  if ((m === "PUT" || m === "DELETE" || m === "POST") && !canEdit(req)) return send(res, 403, { error: "edit_code_required" });
 
   if (p === "/api/state" && m === "GET") return send(res, 200, state);
   if (p === "/api/events" && m === "GET") {
@@ -269,7 +290,7 @@ const server = http.createServer((req, res) => {
 });
 server.requestTimeout = 30000;
 server.listen(PORT, () => {
-  console.log(`Vanshavali listening on :${PORT}, data in ${DATA_DIR}, passcode ${PASSCODE ? "on" : "OFF (anyone with the link can edit)"}`);
+  console.log(`Vanshavali listening on :${PORT}, data in ${DATA_DIR}, view passcode ${PASSCODE ? "on" : "off"}, editing ${EDIT_CODE ? "needs the 6-digit code" : "DISABLED (set EDIT_CODE)"}`);
 });
 function shutdown() {
   try { flushSync(); } catch (e) { console.error("final save failed", e.message); }
