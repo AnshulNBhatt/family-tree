@@ -1,0 +1,31 @@
+# Vanshavali (family tree): one small container with its own data volume.
+# It joins the Curiosand stack's Docker network only so that Caddy can reach it as "vanshavali:3000".
+# Run from this folder:  docker compose up -d --build
+name: vanshavali
+
+services:
+  vanshavali:
+    build: ..
+    restart: unless-stopped
+    environment:
+      EDIT_CODE: ${EDIT_CODE:?EDIT_CODE is missing from .env (run ./install.sh)}
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is missing from .env (run ./install.sh)}
+      # optional: set a passcode in .env to stop people without it from even viewing
+      FAMILY_PASSCODE: ${FAMILY_PASSCODE:-}
+    volumes:
+      - data:/data
+    networks:
+      proxy:
+        aliases: [vanshavali]
+    mem_limit: 128m
+    logging:
+      driver: json-file
+      options: { max-size: "5m", max-file: "3" }
+
+networks:
+  proxy:
+    external: true
+    name: ${PROXY_NETWORK:-curiosand_default}
+
+volumes:
+  data:

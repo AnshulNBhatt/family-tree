@@ -1,0 +1,1741 @@
+<title>Vanshavali Family Tree</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Tiro+Devanagari+Hindi&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap">
+<style>
+/* Layout: a full-bleed, pannable canvas of generations under a slim top bar; the person card docks right on desktop and rises as a sheet on phones. */
+:root{
+  --bg:#EDF0EB; --surface:#FFFFFF; --surface-2:#F5F7F4; --ink:#1C2624; --muted:#5D6A66; --line:#C8D0CB;
+  --accent:#0D6A62; --accent-ink:#FFFFFF; --accent-soft:#D3E8E3; --knot:#A86A12; --danger:#B3352A;
+  --edge:#76857F; --dot:#D2D9D4;
+  --shadow:0 1px 2px rgba(18,38,33,.08),0 8px 24px rgba(18,38,33,.10);
+  --f-display:'Young Serif','Tiro Devanagari Hindi',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Noto Sans Devanagari',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121817; --surface:#1C2422; --surface-2:#18201E; --ink:#E4EBE8; --muted:#98A6A1; --line:#34413D;
+  --accent:#55BBAE; --accent-ink:#0A1412; --accent-soft:#1E3934; --knot:#DDA24A; --danger:#E46C60;
+  --edge:#7D8D88; --dot:#222C29; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#121817; --surface:#1C2422; --surface-2:#18201E; --ink:#E4EBE8; --muted:#98A6A1; --line:#34413D;
+  --accent:#55BBAE; --accent-ink:#0A1412; --accent-soft:#1E3934; --knot:#DDA24A; --danger:#E46C60;
+  --edge:#7D8D88; --dot:#222C29; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;overflow:hidden}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{height:100%;display:grid;grid-template-rows:auto 1fr auto;position:relative}
+button{-webkit-tap-highlight-color:transparent}
+
+/* top bar */
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:var(--surface);border-bottom:1px solid var(--line);position:relative;z-index:5}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto;margin-right:auto}
+.brand h1{font-family:var(--f-display);font-weight:400;font-size:21px;line-height:1.35;margin:0;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status{font-size:12px;line-height:1.4;color:var(--muted);display:flex;align-items:center;gap:6px;min-width:0}
+.status span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.status i{flex:none}
+.status i{width:7px;height:7px;border-radius:50%;background:var(--muted);display:inline-block}
+.status.live i{background:var(--accent)}
+.status.warn i{background:var(--knot)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface-2);flex:none}
+.seg button{border:0;background:transparent;padding:0 12px;min-height:38px;cursor:pointer;font-weight:700;font-size:13.5px;color:var(--muted);min-width:44px;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.icon-btn{display:none;width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);align-items:center;justify-content:center;cursor:pointer;flex:none;padding:0}
+.icon-btn svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round}
+.icon-btn[aria-expanded="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.lockbtn{display:inline-flex;width:auto;min-width:44px;gap:6px;padding:0 12px;font-weight:700;font-size:13.5px;color:var(--ink)}
+.lockbtn[hidden]{display:none!important}
+.lockbtn .ic-open{display:none}
+.lockbtn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.lockbtn.on .ic-open{display:block;stroke:var(--accent)}
+.lockbtn.on .ic-locked{display:none}
+.modal{position:fixed;inset:0;z-index:40;background:rgba(10,20,18,.45);display:grid;place-items:center;padding:16px}
+.modal-box{width:100%;max-width:360px;background:var(--surface);border-radius:16px;padding:22px 20px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.modal-box h2{font-family:var(--f-display);font-weight:400;font-size:22px;line-height:1.3;margin:0}
+.modal-box p{margin:0;color:var(--muted);font-size:14.5px}
+#codeIn{width:100%;font-size:28px!important;letter-spacing:.35em;text-align:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);font-variant-numeric:tabular-nums}
+#codeIn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap}
+.modal-actions .btn{min-height:46px;flex:1 1 120px}
+.viewonly{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px dashed var(--line);border-radius:10px;font-size:14px;color:var(--muted)}
+.search{position:relative;flex:0 1 260px;min-width:150px}
+.search input{width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
+.search input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);max-height:280px;overflow:auto;z-index:20;padding:4px}
+.results button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:6px;cursor:pointer}
+.results button:hover,.results button:focus-visible{background:var(--accent-soft);outline:none}
+.results small{color:var(--muted);margin-left:6px}
+.results p{margin:0;padding:8px 10px;color:var(--muted)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:700;font-size:14px;line-height:1.2;white-space:nowrap;text-decoration:none}
+.btn:hover{border-color:var(--edge)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.danger{color:var(--danger);border-color:var(--danger);background:transparent}
+.btn.danger.armed{background:var(--danger);color:var(--surface)}
+.btn[disabled]{opacity:.5;cursor:default}
+
+/* canvas */
+.stage{position:relative;overflow:hidden;min-height:0}
+#tree{width:100%;height:100%;display:block;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+#tree.grabbing{cursor:grabbing}
+.bgdot{fill:var(--dot)}
+.e-parent{fill:none;stroke:var(--edge);stroke-width:1.6;stroke-linejoin:round}
+.e-spouse-outer{fill:none;stroke:var(--knot);stroke-width:5;stroke-linecap:round}
+.e-spouse-inner{fill:none;stroke:var(--bg);stroke-width:1.6;stroke-linecap:round}
+.e-sib{fill:none;stroke:var(--edge);stroke-width:1.6;stroke-dasharray:5 5}
+.knot{fill:var(--bg);stroke:var(--knot);stroke-width:2}
+.hl.e-parent,.hl.e-sib{stroke:var(--accent);stroke-width:2.6}
+.hl.e-spouse-outer{stroke:var(--accent)}
+.node{cursor:pointer}
+.node .n-card{fill:var(--surface);stroke:var(--line);stroke-width:1.2}
+.node:hover .n-card{stroke:var(--edge)}
+.node:focus{outline:none}
+.node:focus-visible .n-card{stroke:var(--accent);stroke-width:2;stroke-dasharray:5 3}
+.node.rel .n-card{stroke:var(--accent);stroke-width:1.6}
+.node.sel .n-card{stroke:var(--accent);stroke-width:3}
+.n-av{fill:var(--accent-soft)}
+.n-sil{fill:var(--accent);opacity:.55}
+.n-name{font-family:var(--f-body);font-weight:700;font-size:14px;fill:var(--ink)}
+.n-sub{font-family:var(--f-body);font-size:12px;fill:var(--muted);font-variant-numeric:tabular-nums}
+
+.zoom{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:16px;display:flex;flex-direction:column;gap:6px;z-index:3}
+.zoom .btn{width:40px;height:40px;padding:0;font-size:18px;box-shadow:var(--shadow)}
+@media (min-width:721px){.panel-open .zoom{right:calc(416px + env(safe-area-inset-right,0px))}}
+.legend{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--muted);display:grid;gap:5px;z-index:3;box-shadow:var(--shadow)}
+.legend div{display:flex;align-items:center;gap:8px}
+.legend svg{flex:none}
+
+.overlay{position:absolute;inset:0;display:grid;place-items:center;padding:24px;z-index:2;pointer-events:none}
+.overlay .box{pointer-events:auto;max-width:420px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px 26px;box-shadow:var(--shadow);display:grid;gap:12px;justify-items:center}
+.overlay h2{font-family:var(--f-display);font-weight:400;font-size:24px;margin:0;text-wrap:balance}
+.overlay p{margin:0;color:var(--muted)}
+.mini-tree{width:160px;height:84px}
+#passForm{display:grid;gap:10px;width:100%;max-width:280px}
+#passForm input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);text-align:center;font-size:16px}
+#passForm input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.pass-err{color:var(--danger);font-size:13.5px;min-height:1.2em}
+
+/* panel */
+.panel{position:absolute;top:0;right:0;bottom:0;width:400px;max-width:100%;background:var(--surface);border-left:1px solid var(--line);box-shadow:var(--shadow);overflow:auto;overscroll-behavior:contain;z-index:6;
+  padding-right:env(safe-area-inset-right,0px)}
+.panel-inner{--pv:0px;--pi:20px;padding:0 var(--pi) 28px;display:grid;gap:18px}
+.sheetbar{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:6px;margin:0 calc(-1 * var(--pi));padding:4px 8px;min-height:52px;background:var(--surface);border-bottom:1px solid var(--line)}
+.back{display:inline-flex;align-items:center;gap:2px;min-height:44px;padding:0 10px 0 4px;border:0;background:none;color:var(--accent);font-weight:700;font-size:15px;cursor:pointer;border-radius:8px;flex:none}
+.back svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.back:focus-visible{outline:2px solid var(--accent)}
+.sb-title{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:14px}
+
+/* family view: one person in the middle, relatives around them */
+.family{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-block:14px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.fam-col{max-width:560px;margin:0 auto;display:grid}
+.fam-top{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;margin-bottom:6px}
+.fam-top .back{padding-left:0}
+.fam-top .back span{overflow-wrap:anywhere;text-align:left}
+.fam-sec{display:grid;gap:8px}
+.fam-h{display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;line-height:1.4}
+.fam-h svg{flex:none}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pcard{display:flex;align-items:center;gap:10px;min-height:72px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-align:left;cursor:pointer;min-width:0;width:100%;color:var(--ink)}
+.pcard:active{transform:scale(.985)}
+.pcard:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pav{width:44px;height:44px;border-radius:50%;background:var(--accent-soft);flex:none;overflow:hidden;display:grid;place-items:center}
+.pav img{width:100%;height:100%;object-fit:cover}
+.pav svg{width:72%;height:72%}
+.ptext{display:grid;min-width:0;gap:1px}
+.prel{font-size:12px;line-height:1.35;color:var(--muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pname{font-weight:700;font-size:15px;line-height:1.35;overflow-wrap:anywhere}
+.pmeta{font-size:12.5px;line-height:1.35;color:var(--muted);font-variant-numeric:tabular-nums}
+.pcard.add{border-style:dashed;border-color:var(--accent);background:transparent}
+.pcard.add .pav{background:transparent;border:1.5px dashed var(--accent);color:var(--accent);font-size:24px;font-weight:700;line-height:1}
+.pcard.add .pname{color:var(--accent);font-size:14.5px}
+.vline{width:2px;height:24px;background:var(--edge);margin:0 auto}
+.gap{height:22px}
+.focus{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:16px;border:2px solid var(--accent);border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}
+.focus .fav{width:84px;height:84px}
+.focus h2{font-family:var(--f-display);font-weight:400;font-size:24px;line-height:1.3;margin:0;overflow-wrap:anywhere}
+.focus .alt{margin:2px 0 0;font-size:15px;line-height:1.4;overflow-wrap:anywhere;opacity:.8}
+.focus .meta{margin:4px 0 0;font-size:13.5px;line-height:1.4;color:var(--muted)}
+.focus .cta{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.focus .cta .btn{flex:1 1 140px;min-height:44px}
+.mini-row{display:flex;flex-wrap:wrap;gap:6px}
+.mini{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px 4px 4px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:14px;max-width:100%;color:var(--ink)}
+.mini .pav{width:30px;height:30px}
+.mini span.tx{display:grid;text-align:left;min-width:0;line-height:1.3}
+.mini small{color:var(--muted);font-size:11.5px;font-weight:700}
+.mini b{overflow-wrap:anywhere}
+.mini{border-radius:22px}
+.mini:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stage.view-family #tree,.stage.view-family .zoom,.stage.view-family .legend{display:none}
+
+/* bottom tab bar: phones only */
+.tabbar{display:none}
+@media (max-width:720px){
+  .bar{flex-wrap:nowrap;gap:8px;padding-block:8px}
+  .brand h1{font-size:19px}
+  .viewtog,#addPersonBtn{display:none}
+  .icon-btn{display:inline-flex}
+  .lockbtn{padding:0;width:44px}
+  .lockbtn .lb-text{display:none}
+  .search{display:none;position:absolute;left:0;right:0;top:100%;padding:8px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow);min-width:0}
+  .bar.searching .search{display:block}
+  .search input{min-height:46px}
+  .tabbar{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border-top:1px solid var(--line);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);z-index:5}
+  .tabbar button{min-height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:none;color:var(--muted);font-weight:700;font-size:12.5px;cursor:pointer;line-height:1.2}
+  .tabbar svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round}
+  .tabbar button[aria-pressed="true"]{color:var(--accent)}
+  .tabbar .plus{width:30px;height:24px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:20px;line-height:1}
+  .tabbar button:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
+  .app.panel-open .tabbar{display:none}
+  .panel{left:0;width:auto;border-left:0;box-shadow:none;padding-left:env(safe-area-inset-left,0px)}
+  .panel-inner{--pi:16px}
+  .legend{display:none}
+  .panel-open .zoom{display:none}
+  .zoom{bottom:12px}
+  .zoom .btn{width:44px;height:44px}
+  #zIn,#zOut{display:none}
+  input,select,textarea{font-size:16px!important}
+  .add-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .add-grid .btn{min-height:46px}
+  .row-actions .btn{min-height:44px}
+}
+@media (max-width:520px){
+  form .two,form .bi .pair{grid-template-columns:1fr}
+  dl.facts{grid-template-columns:1fr}
+  dl.facts dt{border-bottom:0;padding-bottom:0;font-size:12.5px}
+  dl.facts dd{padding-top:2px}
+  .rel-g{grid-template-columns:1fr;gap:4px}
+  .rel-g .lbl{padding-top:0;font-size:12.5px}
+  .chip{font-size:15px}
+  .chip button.go{min-height:36px}
+  .chip button.rm{width:32px;height:32px;font-size:17px}
+  .head{gap:12px}
+  .avatar{width:64px;height:64px}
+}
+.head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
+.avatar{width:76px;height:76px;border-radius:50%;background:var(--accent-soft);overflow:hidden;display:grid;place-items:center;flex:none}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatar svg{width:60%;height:60%}
+.head h2{font-family:var(--f-display);font-weight:400;font-size:23px;line-height:1.2;margin:0;text-wrap:balance;overflow-wrap:anywhere}
+.head .alt{margin:2px 0 0;font-size:15px;color:var(--ink);opacity:.8;overflow-wrap:anywhere}
+.head .meta{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+.x{width:36px;height:36px;border-radius:8px;border:0;background:transparent;cursor:pointer;font-size:20px;color:var(--muted);align-self:start}
+.x:hover{background:var(--surface-2)}
+.x:focus-visible{outline:2px solid var(--accent)}
+.row-actions{display:flex;flex-wrap:wrap;gap:8px}
+.sec{display:grid;gap:10px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.sec h3{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.linkish{border:0;background:none;color:var(--accent);font-weight:700;cursor:pointer;font-size:13px;padding:2px 4px;border-radius:4px}
+.linkish:focus-visible{outline:2px solid var(--accent)}
+dl.facts{margin:0;display:grid;grid-template-columns:minmax(110px,auto) 1fr;border-top:1px solid var(--line)}
+dl.facts dt,dl.facts dd{padding:9px 0;border-bottom:1px solid var(--line);margin:0}
+dl.facts dt{color:var(--muted);font-size:13.5px;padding-right:12px}
+dl.facts dd{min-width:0;overflow-wrap:anywhere;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+dl.facts dd.empty{color:var(--muted);font-style:italic;font-size:13.5px}
+.copy{border:1px solid var(--line);background:var(--surface-2);border-radius:6px;font-size:12px;padding:2px 8px;cursor:pointer}
+.rels{display:grid;gap:10px}
+.rel-g{display:grid;grid-template-columns:minmax(110px,auto) 1fr;gap:8px;align-items:start}
+.rel-g .lbl{color:var(--muted);font-size:13.5px;padding-top:5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:3px 4px;font-size:14px;max-width:100%}
+.chip button.go{border:0;background:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:0 6px 0 0;font-weight:700;min-width:0}
+.chip button.go span{overflow-wrap:anywhere;text-align:left}
+.chip{border-radius:18px}
+.chip .dot{width:22px;height:22px;border-radius:50%;background:var(--accent-soft);overflow:hidden;flex:none;display:grid;place-items:center}
+.chip .dot img{width:100%;height:100%;object-fit:cover}
+.chip .dot svg{width:70%;height:70%}
+.chip button.rm{border:0;background:var(--surface);border-radius:50%;width:22px;height:22px;cursor:pointer;color:var(--danger);font-size:14px;line-height:1}
+.chip button:focus-visible{outline:2px solid var(--accent);border-radius:999px}
+.add-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.add-grid .wide{grid-column:1/-1}
+.note{font-size:13px;color:var(--muted);margin:0}
+
+form.f{display:grid;gap:12px}
+.field{display:grid;gap:4px;min-width:0}
+.field label{font-size:13px;color:var(--muted);font-weight:700}
+.field input,.field select,.field textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
+.field textarea{min-height:72px;resize:vertical}
+.field input:focus-visible,.field select:focus-visible,.field textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bi{display:grid;gap:6px;border:0;margin:0;padding:0;min-width:0}
+.bi legend{font-size:13px;color:var(--muted);font-weight:700;padding:0;margin-bottom:4px}
+.bi .pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bi .pair>*{min-width:0}
+.bi .tag{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.bi input,.bi textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
+.bi textarea{min-height:64px;resize:vertical}
+.bi input:focus-visible,.bi textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two>*{min-width:0}
+@media (max-width:420px){.bi .pair{grid-template-columns:1fr}}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+.check input{margin-top:3px;accent-color:var(--accent);width:18px;height:18px;flex:none}
+.check{min-height:36px;align-items:center}
+fieldset.opts{border:0;margin:0;padding:0;min-width:0}
+fieldset.opts legend{padding:0;margin-bottom:6px}
+fieldset[data-pick] .check{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--surface-2)}
+fieldset[data-pick] .check:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;position:sticky;bottom:0;z-index:2;background:var(--surface);margin:0 calc(-1 * var(--pi)) -28px;padding:12px var(--pi) calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
+.form-actions .btn{min-height:44px}
+.form-actions .spacer{flex:1}
+.ftitle{font-family:var(--f-display);font-weight:400;font-size:21px;margin:0;overflow-wrap:anywhere}
+.form-err{color:var(--danger);font-size:13.5px;margin:0}
+
+.toast{position:absolute;left:50%;transform:translateX(-50%);top:12px;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:14px;z-index:30;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.toast.err{background:var(--danger);color:#fff}
+@media (prefers-reduced-motion: no-preference){
+  .panel{animation:slide .18s ease-out}
+  @keyframes slide{from{transform:translateX(16px);opacity:.6}to{transform:none;opacity:1}}
+}
+</style>
+
+<div class="app">
+  <header class="bar">
+    <div class="brand">
+      <h1 data-t="title">Vanshavali</h1>
+      <span class="status" id="status"><i></i><span id="statusText"></span></span>
+    </div>
+    <div class="seg viewtog" role="group" id="viewTog">
+      <button type="button" data-view="family" data-t="view_family"></button>
+      <button type="button" data-view="tree" data-t="view_tree"></button>
+    </div>
+    <div class="seg lang" role="group" aria-label="Language / भाषा">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="hi" aria-pressed="false" lang="hi">हिं</button>
+    </div>
+    <div class="search">
+      <input id="q" type="search" autocomplete="off">
+      <div class="results" id="results" hidden></div>
+    </div>
+    <button class="icon-btn lockbtn" id="editBtn" type="button" hidden><svg class="ic-locked" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"></rect><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"></path></svg><svg class="ic-open" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"></rect><path d="M8 10.5V7.5a4 4 0 0 1 7.6-1.7"></path></svg><span class="lb-text"></span></button>
+    <button class="icon-btn" id="searchBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5 21 21"></path></svg></button>
+    <button class="btn primary" id="addPersonBtn" type="button" data-t="add_person"></button>
+  </header>
+
+  <main class="stage" id="stage">
+    <svg id="tree">
+      <defs>
+        <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle class="bgdot" cx="2" cy="2" r="1.2"></circle></pattern>
+        <clipPath id="avClip"><circle cx="30" cy="30" r="21"></circle></clipPath>
+        <symbol id="sil" viewBox="0 0 42 42"><circle cx="21" cy="15.5" r="7.5"></circle><path d="M6.5 38c1.6-8.5 7.6-13 14.5-13s12.9 4.5 14.5 13z"></path></symbol>
+      </defs>
+      <g id="viewport">
+        <rect x="-50000" y="-50000" width="100000" height="100000" fill="url(#dots)"></rect>
+        <g id="gEdges"></g>
+        <g id="gNodes"></g>
+      </g>
+    </svg>
+
+    <div class="family" id="family" hidden></div>
+
+    <div class="overlay" id="overlay">
+      <div class="box">
+        <svg class="mini-tree" viewBox="0 0 160 84" aria-hidden="true">
+          <rect x="10" y="4" width="56" height="22" rx="6" fill="var(--surface-2)" stroke="var(--line)"></rect>
+          <rect x="94" y="4" width="56" height="22" rx="6" fill="var(--surface-2)" stroke="var(--line)"></rect>
+          <path d="M66 15H94" stroke="var(--knot)" stroke-width="4"></path><path d="M66 15H94" stroke="var(--surface)" stroke-width="1.4"></path>
+          <path d="M80 15V44M38 44H122M38 44V58M122 44V58" fill="none" stroke="var(--edge)" stroke-width="1.5"></path>
+          <rect x="10" y="58" width="56" height="22" rx="6" fill="var(--surface-2)" stroke="var(--line)"></rect>
+          <rect x="94" y="58" width="56" height="22" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"></rect>
+        </svg>
+        <h2 id="ovTitle"></h2>
+        <p id="ovText"></p>
+        <form id="passForm" hidden>
+          <input id="passIn" type="password" autocomplete="current-password" required>
+          <span class="pass-err" id="passErr" role="alert"></span>
+          <button class="btn primary" type="submit" data-t="pass_btn"></button>
+        </form>
+        <button class="btn primary" id="ovBtn" type="button" data-t="add_first" hidden></button>
+      </div>
+    </div>
+
+    <div class="legend" id="legend">
+      <div><svg width="34" height="14" aria-hidden="true"><path d="M4 2V7H30V12" fill="none" stroke="var(--edge)" stroke-width="1.6"></path></svg><span data-t="legend_parent"></span></div>
+      <div><svg width="34" height="14" aria-hidden="true"><path d="M3 7H31" stroke="var(--knot)" stroke-width="5" stroke-linecap="round"></path><path d="M3 7H31" stroke="var(--surface)" stroke-width="1.6"></path></svg><span data-t="legend_married"></span></div>
+      <div><svg width="34" height="14" aria-hidden="true"><path d="M3 11Q17 0 31 11" fill="none" stroke="var(--edge)" stroke-width="1.6" stroke-dasharray="5 5"></path></svg><span data-t="legend_sib"></span></div>
+    </div>
+
+    <div class="zoom">
+      <button class="btn" id="zIn" type="button">+</button>
+      <button class="btn" id="zOut" type="button">−</button>
+      <button class="btn" id="zFit" type="button">⤢</button>
+    </div>
+
+    <aside class="panel" id="panel" hidden><div class="panel-inner" id="panelBody"></div></aside>
+    <div class="toast" id="toast" hidden role="status"></div>
+    <div class="modal" id="unlock" hidden role="dialog" aria-modal="true" aria-labelledby="unTitle">
+      <form class="modal-box" id="unlockForm" novalidate>
+        <h2 id="unTitle" data-t="unlock_title"></h2>
+        <p data-t="unlock_text"></p>
+        <input id="codeIn" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="••••••">
+        <span class="pass-err" id="codeErr" role="alert"></span>
+        <div class="modal-actions"><button class="btn primary" type="submit" data-t="unlock_btn"></button><button class="btn ghost" type="button" id="unCancel" data-t="cancel"></button></div>
+      </form>
+    </div>
+  </main>
+  <nav class="tabbar" id="tabbar">
+    <button type="button" data-view="family"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="3"></circle><circle cx="5.5" cy="18" r="2.6"></circle><circle cx="18.5" cy="18" r="2.6"></circle><path d="M12 9v4M5.5 15.4V13h13v2.4"></path></svg><span data-t="view_family"></span></button>
+    <button type="button" data-view="tree"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="8.5" y="16" width="7" height="5" rx="1.5"></rect><path d="M10 5.5h4M12 5.5V16"></path></svg><span data-t="view_tree"></span></button>
+    <button type="button" id="tabAdd" class="tab-add"><span class="plus" aria-hidden="true">+</span><span data-t="tab_add"></span></button>
+  </nav>
+  <input type="file" id="photoInput" accept="image/*" hidden>
+</div>
+
+<script>
+(() => {
+"use strict";
+/* ================= language ================= */
+const STR = {
+  en: {
+    title: "Vanshavali", add_person: "+ Add person", search_ph: "Find a person",
+    unlock_title: "Enter the edit code", unlock_text: "Anyone with the link can look at the tree. To add or change anything, enter the 6-digit code your family shared with you.",
+    unlock_btn: "Unlock editing", code_wrong: "That code isn't right. Try again.", code_short: "The code has 6 digits.",
+    edit_on: "Editing unlocked on this device", edit_off: "Editing locked on this device", lock_edit: "Lock editing", unlock_edit: "Unlock editing",
+    edit_word: "Edit", editing_word: "Editing", tab_edit: "Edit", e_edit_required: "Enter the edit code to make changes.",
+    view_only_note: "You're viewing. Have the edit code?", empty_locked: "No one has been added yet. Enter the edit code to start the tree.",
+    st_live_view: "Live · view only", st_live_edit: "Live · editing on",
+    view_family: "Family", view_tree: "Tree", tab_add: "Add", search: "Search", back: "Back", back_to: "Back to {n}",
+    full_details: "Details & relatives", see_in_tree: "See in tree", edit_short: "Edit",
+    sec_grandparents: "Grandparents", sec_parents: "Parents", sec_spouse: "Spouse", sec_children: "Children",
+    sec_grandchildren: "Grandchildren", sec_siblings: "Brothers and sisters", tap_hint: "Tap anyone to see their family.",
+    st_local: "Saved in this browser only", st_connecting: "Connecting…", st_live: "Shared · changes sync live", st_view: "View only",
+    st_offline: "Can't reach the shared tree yet", st_stopped: "Live updates stopped. Reload to reconnect.", st_reconnecting: "Reconnecting…",
+    loading_title: "Loading the family tree", loading_text: "Fetching everyone added so far.",
+    still_title: "Still connecting", still_text: "The shared tree hasn't answered yet. It will appear here as soon as it does.",
+    empty_title: "Start your family tree",
+    empty_w: "Add one person, then grow the tree from their card: parents above, children below, spouses and siblings beside them.",
+    empty_r: "No one has been added yet. You have view-only access.", add_first: "Add the first person",
+    pass_title: "Enter the family passcode", pass_text: "Ask a family member if you don't have it.", pass_ph: "Passcode", pass_btn: "Open the tree",
+    pass_wrong: "That passcode isn't right. Try again.", pass_many: "Too many tries. Wait a few minutes and try again.",
+    legend_parent: "Parent and child", legend_married: "Married", legend_sib: "Siblings (parents not added)",
+    zoom_in: "Zoom in", zoom_out: "Zoom out", zoom_fit: "Fit whole tree", tree_label: "Family tree", panel_label: "Person details",
+    details: "Details", relationships: "Relationships", not_added: "Not added", edit_details: "Edit details",
+    upload_photo: "Upload photo", change_photo: "Change photo", remove_photo: "Remove photo", edit_links: "Edit links", done: "Done",
+    add_relative: "Add a relative of {n}", link_existing: "Link someone already in the tree",
+    no_rel_w: "No relatives linked yet. Use the buttons below to add parents, a spouse, children or siblings.", no_rel_r: "No relatives linked yet.",
+    last_updated: "Last updated {d}", copy: "Copy", copied: "Copied", close: "Close", unnamed: "Unnamed", open_details: "{n}, open details",
+    remove_link: "Remove link to {n}", no_match: "No one matches “{q}”.",
+    male: "Male", female: "Female", other: "Other / not set", years: "{n} years", lived: "lived {n} years", gotra_meta: "{g} gotra",
+    born: "b. {y}", died: "d. {y}",
+    f_name: "Full name", f_gender: "Gender", f_dob: "Date of birth", f_dod: "Date of death", f_phone: "Phone", f_email: "Email",
+    f_location: "Current location", f_birthplace: "Native place", f_gotra: "Gotra", f_occupation: "Occupation", f_notes: "Notes",
+    ph_name: "e.g. Ramesh Chandra Sharma", ph_name_hi: "जैसे रमेश चंद्र शर्मा", ph_dob: "1952-03-14 or 1952", ph_dod: "Leave empty if living",
+    ph_location: "City, State", ph_location_hi: "शहर, राज्य", ph_birthplace: "Village / town of origin", ph_birthplace_hi: "पैतृक गाँव / शहर",
+    ph_gotra: "e.g. Bharadwaj", ph_gotra_hi: "जैसे भारद्वाज", ph_notes: "Anything worth remembering", ph_notes_hi: "याद रखने लायक कुछ भी",
+    in_en: "English", in_hi: "हिन्दी",
+    lang_hint: "Fill in English, Hindi, or both. Everyone sees the version that matches the language they pick at the top.",
+    edit_title: "Edit {n}", new_title: "Add a person", save: "Save changes", add: "Add person", cancel: "Cancel",
+    del: "Delete person", del_confirm: "Confirm delete", name_needed: "Enter a name in English or Hindi.",
+    r_father: "father", r_mother: "mother", r_wife: "wife", r_husband: "husband", r_spouse: "spouse", r_son: "son", r_daughter: "daughter", r_brother: "brother", r_sister: "sister",
+    b_father: "+ Father", b_mother: "+ Mother", b_wife: "+ Wife", b_husband: "+ Husband", b_spouse: "+ Spouse", b_son: "+ Son", b_daughter: "+ Daughter", b_brother: "+ Brother", b_sister: "+ Sister",
+    add_rel_title: "Add {r} of {n}", add_rel_btn: "Add {r}", also_link: "Also link",
+    o_marry: "Married to {n}", o_also_parent: "Also {r} of {n}", o_parent_of: "Also parent of {n}", o_co_parent: "Also child of {n}", o_same_parent: "Child of {n}",
+    whose_child: "Whose child is this?", o_pair: "{a} and {b}", o_pair_none: "Only {a} (other parent not in the tree)",
+    pick_pair: "Choose whose child this is.", link_other_parent: "Other parent", none_other: "Not in the tree / unknown",
+    kids_with: "Children with {n}", kids_other: "Children (other parent not added)",
+    later_note: "Phone, location and other details can be added later from their own card.",
+    link_title: "Link someone to {n}", link_person: "Person", link_they: "Their relationship to {n}",
+    l_parent: "Parent (father or mother)", l_child: "Child (son or daughter)", l_spouse: "Spouse (husband or wife)", l_sibling: "Sibling (brother or sister)",
+    link_note: "Use this to join two branches, for example when a daughter-in-law's own family is already in the tree.",
+    link_btn: "Link", nobody_else: "There's no one else in the tree yet.",
+    t_saved: "Saved", t_added: "{n} added", t_removed: "{n} was removed from the tree", t_photo_saved: "Photo saved", t_photo_removed: "Photo removed",
+    t_link_removed: "Link removed", t_linked: "Linked",
+    e_view_only: "You have view-only access, so changes can't be saved. Ask the owner for Contributor access.",
+    e_quota: "The tree's storage is full. Remove some photos to make room.", e_generic: "That change didn't save. Check your connection and try again.",
+    e_auth: "Your session ended. Enter the family passcode again.", e_too_large: "That photo is too large. Try a smaller one.",
+    e_image: "Choose an image file (JPG, PNG or similar).", e_image_read: "That image couldn't be read. Try a JPG or PNG.",
+    e_parent_conflict: "That person is already a child or sibling here, so they can't also be a parent.", e_child_conflict: "That person is already a parent here.",
+    e_storage: "This browser could not save the change (storage is full or blocked).", select_copy: "Selected. Press Ctrl+C or ⌘C to copy.",
+  },
+  hi: {
+    title: "वंशावली", add_person: "+ व्यक्ति जोड़ें", search_ph: "व्यक्ति खोजें",
+    unlock_title: "बदलाव का कोड डालें", unlock_text: "लिंक वाला कोई भी वृक्ष देख सकता है। कुछ जोड़ने या बदलने के लिए परिवार से मिला 6 अंकों का कोड डालें।",
+    unlock_btn: "बदलाव चालू करें", code_wrong: "कोड सही नहीं है। फिर से कोशिश करें।", code_short: "कोड 6 अंकों का है।",
+    edit_on: "इस डिवाइस पर बदलाव चालू", edit_off: "इस डिवाइस पर बदलाव बंद", lock_edit: "बदलाव बंद करें", unlock_edit: "बदलाव चालू करें",
+    edit_word: "बदलें", editing_word: "बदलाव चालू", tab_edit: "बदलें", e_edit_required: "बदलाव के लिए कोड डालें।",
+    view_only_note: "आप केवल देख रहे हैं। बदलाव का कोड है?", empty_locked: "अभी तक कोई नहीं जोड़ा गया है। वृक्ष शुरू करने के लिए बदलाव का कोड डालें।",
+    st_live_view: "लाइव · केवल देखना", st_live_edit: "लाइव · बदलाव चालू",
+    view_family: "परिवार", view_tree: "वृक्ष", tab_add: "जोड़ें", search: "खोजें", back: "वापस", back_to: "{n} पर वापस",
+    full_details: "विवरण और रिश्तेदार", see_in_tree: "वृक्ष में देखें", edit_short: "बदलें",
+    sec_grandparents: "दादा-दादी / नाना-नानी", sec_parents: "माता-पिता", sec_spouse: "जीवनसाथी", sec_children: "संतान",
+    sec_grandchildren: "पोते-पोती / नाती-नातिन", sec_siblings: "भाई-बहन", tap_hint: "किसी पर भी टैप करें, उनका परिवार दिखेगा।",
+    st_local: "केवल इस ब्राउज़र में सहेजा गया", st_connecting: "जुड़ रहा है…", st_live: "साझा · बदलाव तुरंत दिखते हैं", st_view: "केवल देखने की अनुमति",
+    st_offline: "साझा वृक्ष से अभी संपर्क नहीं हो पा रहा", st_stopped: "लाइव अपडेट रुक गए। दोबारा जुड़ने के लिए पेज रीलोड करें।", st_reconnecting: "फिर से जुड़ रहा है…",
+    loading_title: "वंशवृक्ष लोड हो रहा है", loading_text: "अब तक जोड़े गए सभी लोगों को लाया जा रहा है।",
+    still_title: "अभी जुड़ रहा है", still_text: "साझा वृक्ष ने अभी जवाब नहीं दिया। जवाब मिलते ही यहाँ दिखेगा।",
+    empty_title: "अपना वंशवृक्ष शुरू करें",
+    empty_w: "एक व्यक्ति जोड़ें, फिर उनके कार्ड से वृक्ष बढ़ाएँ: माता-पिता ऊपर, संतान नीचे, जीवनसाथी और भाई-बहन बगल में।",
+    empty_r: "अभी तक कोई नहीं जोड़ा गया है। आपके पास केवल देखने की अनुमति है।", add_first: "पहला व्यक्ति जोड़ें",
+    pass_title: "परिवार का पासकोड डालें", pass_text: "पासकोड न हो तो परिवार के किसी सदस्य से पूछें।", pass_ph: "पासकोड", pass_btn: "वृक्ष खोलें",
+    pass_wrong: "पासकोड सही नहीं है। फिर से कोशिश करें।", pass_many: "बहुत बार गलत पासकोड डाला गया। कुछ मिनट बाद कोशिश करें।",
+    legend_parent: "माता-पिता और संतान", legend_married: "विवाहित", legend_sib: "भाई-बहन (माता-पिता नहीं जोड़े गए)",
+    zoom_in: "बड़ा करें", zoom_out: "छोटा करें", zoom_fit: "पूरा वृक्ष दिखाएँ", tree_label: "वंशवृक्ष", panel_label: "व्यक्ति का विवरण",
+    details: "विवरण", relationships: "रिश्ते", not_added: "नहीं जोड़ा गया", edit_details: "विवरण बदलें",
+    upload_photo: "फ़ोटो अपलोड करें", change_photo: "फ़ोटो बदलें", remove_photo: "फ़ोटो हटाएँ", edit_links: "रिश्ते बदलें", done: "हो गया",
+    add_relative: "{n} का रिश्तेदार जोड़ें", link_existing: "वृक्ष में पहले से मौजूद व्यक्ति को जोड़ें",
+    no_rel_w: "अभी कोई रिश्तेदार नहीं जुड़ा है। नीचे के बटन से माता-पिता, जीवनसाथी, संतान या भाई-बहन जोड़ें।", no_rel_r: "अभी कोई रिश्तेदार नहीं जुड़ा है।",
+    last_updated: "अंतिम बदलाव {d}", copy: "कॉपी", copied: "कॉपी हुआ", close: "बंद करें", unnamed: "अनाम", open_details: "{n}, विवरण खोलें",
+    remove_link: "{n} से रिश्ता हटाएँ", no_match: "“{q}” से मेल खाता कोई नहीं मिला।",
+    male: "पुरुष", female: "महिला", other: "अन्य / नहीं बताया", years: "{n} वर्ष", lived: "{n} वर्ष जीवित रहे", gotra_meta: "{g} गोत्र",
+    born: "जन्म {y}", died: "निधन {y}",
+    f_name: "पूरा नाम", f_gender: "लिंग", f_dob: "जन्म तिथि", f_dod: "मृत्यु तिथि", f_phone: "फ़ोन", f_email: "ईमेल",
+    f_location: "वर्तमान पता", f_birthplace: "पैतृक स्थान", f_gotra: "गोत्र", f_occupation: "व्यवसाय", f_notes: "टिप्पणी",
+    ph_name: "e.g. Ramesh Chandra Sharma", ph_name_hi: "जैसे रमेश चंद्र शर्मा", ph_dob: "1952-03-14 या 1952", ph_dod: "जीवित हों तो खाली छोड़ें",
+    ph_location: "City, State", ph_location_hi: "शहर, राज्य", ph_birthplace: "Village / town of origin", ph_birthplace_hi: "पैतृक गाँव / शहर",
+    ph_gotra: "e.g. Bharadwaj", ph_gotra_hi: "जैसे भारद्वाज", ph_notes: "Anything worth remembering", ph_notes_hi: "याद रखने लायक कुछ भी",
+    in_en: "English", in_hi: "हिन्दी",
+    lang_hint: "अंग्रेज़ी, हिन्दी या दोनों में भरें। ऊपर चुनी गई भाषा के अनुसार सबको वही रूप दिखेगा।",
+    edit_title: "{n} का विवरण बदलें", new_title: "व्यक्ति जोड़ें", save: "बदलाव सहेजें", add: "व्यक्ति जोड़ें", cancel: "रद्द करें",
+    del: "व्यक्ति हटाएँ", del_confirm: "हटाने की पुष्टि करें", name_needed: "अंग्रेज़ी या हिन्दी में नाम लिखें।",
+    r_father: "पिता", r_mother: "माता", r_wife: "पत्नी", r_husband: "पति", r_spouse: "जीवनसाथी", r_son: "बेटा", r_daughter: "बेटी", r_brother: "भाई", r_sister: "बहन",
+    b_father: "+ पिता", b_mother: "+ माता", b_wife: "+ पत्नी", b_husband: "+ पति", b_spouse: "+ जीवनसाथी", b_son: "+ बेटा", b_daughter: "+ बेटी", b_brother: "+ भाई", b_sister: "+ बहन",
+    add_rel_title: "{n}: {r} जोड़ें", add_rel_btn: "{r} जोड़ें", also_link: "साथ में यह भी जोड़ें",
+    o_marry: "{n} से विवाहित", o_also_parent: "{n} के भी {r}", o_parent_of: "{n} के भी माता/पिता", o_co_parent: "{n} की भी संतान", o_same_parent: "{n} की संतान",
+    whose_child: "यह किसकी संतान है?", o_pair: "{a} और {b}", o_pair_none: "केवल {a} (दूसरे माता/पिता वृक्ष में नहीं)",
+    pick_pair: "चुनें कि यह किसकी संतान है।", link_other_parent: "दूसरे माता/पिता", none_other: "वृक्ष में नहीं / पता नहीं",
+    kids_with: "{n} के साथ संतान", kids_other: "संतान (दूसरे माता/पिता नहीं जोड़े गए)",
+    later_note: "फ़ोन, पता और अन्य विवरण बाद में उनके अपने कार्ड से जोड़ सकते हैं।",
+    link_title: "{n} से किसी को जोड़ें", link_person: "व्यक्ति", link_they: "{n} से उनका रिश्ता",
+    l_parent: "माता या पिता", l_child: "संतान (बेटा या बेटी)", l_spouse: "जीवनसाथी (पति या पत्नी)", l_sibling: "भाई या बहन",
+    link_note: "दो शाखाओं को जोड़ने के लिए, जैसे जब बहू का मायका पहले से वृक्ष में हो।",
+    link_btn: "जोड़ें", nobody_else: "वृक्ष में अभी कोई और नहीं है।",
+    t_saved: "सहेजा गया", t_added: "{n} जोड़े गए", t_removed: "{n} को वृक्ष से हटा दिया गया", t_photo_saved: "फ़ोटो सहेजी गई", t_photo_removed: "फ़ोटो हटाई गई",
+    t_link_removed: "रिश्ता हटाया गया", t_linked: "जोड़ दिया गया",
+    e_view_only: "आपके पास केवल देखने की अनुमति है, इसलिए बदलाव सहेजे नहीं जा सकते।",
+    e_quota: "वृक्ष की जगह भर गई है। जगह बनाने के लिए कुछ फ़ोटो हटाएँ।", e_generic: "बदलाव सहेजा नहीं गया। इंटरनेट जाँचें और फिर कोशिश करें।",
+    e_auth: "आपका सत्र समाप्त हो गया। परिवार का पासकोड फिर से डालें।", e_too_large: "यह फ़ोटो बहुत बड़ी है। छोटी फ़ोटो चुनें।",
+    e_image: "कोई फ़ोटो फ़ाइल चुनें (JPG, PNG आदि)।", e_image_read: "यह फ़ोटो खुल नहीं पाई। JPG या PNG आज़माएँ।",
+    e_parent_conflict: "यह व्यक्ति यहाँ पहले से संतान या भाई-बहन है, इसलिए माता-पिता नहीं हो सकता।", e_child_conflict: "यह व्यक्ति यहाँ पहले से माता-पिता है।",
+    e_storage: "यह ब्राउज़र बदलाव सहेज नहीं पाया (जगह भर गई है या रोक लगी है)।", select_copy: "चुन लिया गया। कॉपी करने के लिए Ctrl+C या ⌘C दबाएँ।",
+  },
+};
+let lang = "en";
+try { lang = localStorage.getItem("vanshavali-lang") || ((navigator.language || "").toLowerCase().startsWith("hi") ? "hi" : "en"); } catch (e) {}
+if (!STR[lang]) lang = "en";
+const t = (k, v) => { let s = (STR[lang][k] ?? STR.en[k] ?? k); if (v) for (const x in v) s = s.split("{" + x + "}").join(v[x]); return s; };
+
+/* ================= constants & helpers ================= */
+const NODE_W = 184, NODE_H = 60, SPOUSE_GAP = 30, UNIT_GAP = 30, FAMILY_GAP = 70, ROW_H = 160, ROW_GAP = 100;
+const NAME_W = NODE_W - 70, LINE_H = 17;
+/* Names are wrapped onto as many lines as they need (never cut off); the box grows taller instead. */
+const measureCtx = document.createElement("canvas").getContext("2d");
+const graphemes = (w) => (typeof Intl !== "undefined" && Intl.Segmenter) ? [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(w)].map((x) => x.segment) : [...w];
+function wrapName(text, maxW) {
+  measureCtx.font = "700 14px 'Source Sans 3','Noto Sans Devanagari',system-ui,sans-serif";
+  const fits = (s2) => measureCtx.measureText(s2).width <= maxW;
+  const lines = []; let cur = "";
+  for (const w of String(text).split(/\s+/).filter(Boolean)) {
+    const test = cur ? cur + " " + w : w;
+    if (fits(test)) { cur = test; continue; }
+    if (cur) lines.push(cur);
+    if (fits(w)) { cur = w; continue; }
+    let part = ""; // a single word wider than the box: break it between letters
+    for (const ch of graphemes(w)) { if (part && !fits(part + ch)) { lines.push(part); part = ch; } else part += ch; }
+    cur = part;
+  }
+  if (cur) lines.push(cur);
+  return lines.length ? lines : [""];
+}
+function nodeBox(id) {
+  const p = people.get(id), lines = wrapName(nm(id), NAME_W), ll = lifeLine(p);
+  const content = lines.length * LINE_H + (ll ? 16 : 0);
+  return { lines, ll, h: Math.max(NODE_H, content + 24) };
+}
+const SVGNS = "http://www.w3.org/2000/svg";
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function el(tag, attrs, parent) { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+const mean = (a) => a.reduce((s, v) => s + v, 0) / a.length;
+const G = (gender, m, f, n) => gender === "male" ? m : gender === "female" ? f : n;
+const SIL = '<svg viewBox="0 0 42 42" aria-hidden="true"><use href="#sil" class="n-sil"></use></svg>';
+const MONTHS = {
+  en: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+  hi: ["जनवरी","फ़रवरी","मार्च","अप्रैल","मई","जून","जुलाई","अगस्त","सितंबर","अक्टूबर","नवंबर","दिसंबर"],
+};
+const BI = ["name", "location", "birthplace", "gotra", "occupation", "notes"]; // fields kept in both languages
+
+/* value of a bilingual field in the chosen language, falling back to the other */
+const tx = (p, k) => { if (!p) return ""; const en = p[k] || "", hi = p[k + "_hi"] || ""; return lang === "hi" ? (hi || en) : (en || hi); };
+const txAlt = (p, k) => { if (!p) return ""; const en = p[k] || "", hi = p[k + "_hi"] || ""; const a = lang === "hi" ? en : hi; return a && a !== tx(p, k) ? a : ""; };
+const nm = (id) => tx(people.get(id), "name") || t("unnamed");
+
+function fmtDate(s) {
+  if (!s) return "";
+  const m = String(s).trim().match(/^(\d{4})(?:-(\d{1,2}))?(?:-(\d{1,2}))?$/);
+  if (!m) return String(s);
+  const [, y, mo, d] = m; const M = MONTHS[lang];
+  if (d) return `${+d} ${M[+mo - 1] || ""} ${y}`;
+  if (mo) return `${M[+mo - 1] || ""} ${y}`;
+  return y;
+}
+function yearOf(s) { const m = String(s || "").match(/(\d{4})/); return m ? +m[1] : null; }
+function ageOf(p) {
+  const by = yearOf(p.dob); if (by == null) return null;
+  const m = String(p.dob).match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  const end = p.dod ? new Date(String(p.dod)) : new Date();
+  if (m && !isNaN(end)) {
+    const b = new Date(+m[1], +m[2] - 1, +m[3]);
+    let a = end.getFullYear() - b.getFullYear();
+    if (end.getMonth() < b.getMonth() || (end.getMonth() === b.getMonth() && end.getDate() < b.getDate())) a--;
+    return a;
+  }
+  const ey = p.dod ? yearOf(p.dod) : new Date().getFullYear();
+  return ey != null ? ey - by : null;
+}
+function lifeLine(p) {
+  const b = yearOf(p.dob), d = yearOf(p.dod);
+  if (b && d) return `${b} – ${d}`;
+  if (d) return t("died", { y: d });
+  if (b) return t("born", { y: b });
+  return "";
+}
+/* is a older than b? null when unknown */
+function older(a, b) {
+  const da = String(people.get(a)?.dob || ""), db = String(people.get(b)?.dob || "");
+  const ya = yearOf(da), yb = yearOf(db);
+  if (ya == null || yb == null) return null;
+  if (ya !== yb) return ya < yb;
+  if (da.length >= 10 && db.length >= 10 && da !== db) return da < db;
+  return null;
+}
+
+/* ================= state ================= */
+let people = new Map(), relations = new Map(), photos = new Map();
+let idx = { parents: new Map(), children: new Map(), spouses: new Map(), sibx: new Map() };
+let store = null, writable = true, mode = "loading", statusKey = "st_connecting", statusKind = "";
+let sel = null, panelMode = "view", editLinks = false;
+let lastLayout = null, fittedOnce = false, addWith = null;
+const isPhone = () => window.innerWidth <= 720;
+let viewMode = "tree", focus = null; const hist = [];
+try { viewMode = localStorage.getItem("vanshavali-view") || (isPhone() ? "family" : "tree"); focus = localStorage.getItem("vanshavali-focus"); } catch (e) { viewMode = isPhone() ? "family" : "tree"; }
+if (viewMode !== "family" && viewMode !== "tree") viewMode = "family";
+const loaded = { people: false };
+
+const S = (m, k) => m.get(k) || new Set();
+function rebuildIndex() {
+  idx = { parents: new Map(), children: new Map(), spouses: new Map(), sibx: new Map() };
+  const add = (m, k, v) => { if (!m.has(k)) m.set(k, new Set()); m.get(k).add(v); };
+  for (const r of relations.values()) {
+    if (!r || !people.has(r.a) || !people.has(r.b) || r.a === r.b) continue;
+    if (r.type === "parent") { add(idx.parents, r.b, r.a); add(idx.children, r.a, r.b); }
+    else if (r.type === "spouse") { add(idx.spouses, r.a, r.b); add(idx.spouses, r.b, r.a); }
+    else if (r.type === "sibling") { add(idx.sibx, r.a, r.b); add(idx.sibx, r.b, r.a); }
+  }
+}
+const parentsOf = (id) => [...S(idx.parents, id)];
+const childrenOf = (id) => [...S(idx.children, id)];
+const spousesOf = (id) => [...S(idx.spouses, id)];
+function siblingsOf(id) {
+  const out = new Set();
+  const viaParents = (x) => { for (const p of S(idx.parents, x)) for (const c of S(idx.children, p)) out.add(c); };
+  viaParents(id);
+  const seen = new Set([id]), st = [id];
+  while (st.length) {
+    const x = st.pop();
+    for (const s of S(idx.sibx, x)) if (!seen.has(s)) { seen.add(s); out.add(s); viaParents(s); st.push(s); }
+  }
+  for (const s of [...out]) for (const q of S(idx.sibx, s)) out.add(q);
+  out.delete(id);
+  return [...out];
+}
+/* spouses in the order the marriages were added (first marriage first) */
+function spousesInOrder(id) {
+  const at = (s) => relations.get(rid("spouse", id, s))?.createdAt || 0;
+  return spousesOf(id).sort((a, b) => at(a) - at(b) || byAge(a, b));
+}
+function rid(type, a, b) { if (type !== "parent") [a, b] = [a, b].sort(); return `${type}~${a}~${b}`; }
+const byName = (a, b) => nm(a).localeCompare(nm(b), lang);
+const byAge = (a, b) => (yearOf(people.get(a)?.dob) ?? 9999) - (yearOf(people.get(b)?.dob) ?? 9999) || (people.get(a)?.createdAt || 0) - (people.get(b)?.createdAt || 0);
+
+/* ================= storage backends ================= */
+/* 1) claude.ai artifact database */
+function artifactStore(db) {
+  const chains = new Map();
+  const q = (path, fn) => { const next = (chains.get(path) || Promise.resolve()).catch(() => {}).then(fn); chains.set(path, next); return next; };
+  return {
+    savePerson: (id, d) => q("people/" + id, () => db.doc("people/" + id).set(d)),
+    deletePerson: (id) => q("people/" + id, () => db.doc("people/" + id).delete()),
+    setRelation: (id, d) => q("relations/" + id, () => db.doc("relations/" + id).set(d)),
+    deleteRelation: (id) => q("relations/" + id, () => db.doc("relations/" + id).delete()),
+    setPhoto: (id, data) => q("photos/" + id, () => db.doc("photos/" + id).set({ data, updatedAt: Date.now() })),
+    deletePhoto: (id) => q("photos/" + id, () => db.doc("photos/" + id).delete()),
+  };
+}
+/* 2) self-hosted server (server.js): REST + server-sent events */
+function serverStore() {
+  const req = async (method, path, body) => {
+    let r;
+    try { r = await fetch("api/" + path, { method, credentials: "same-origin", headers: body ? { "content-type": "application/json" } : {}, body: body ? JSON.stringify(body) : undefined }); }
+    catch (e) { throw { code: "unavailable" }; }
+    if (r.status === 401) { showPasscode(); throw { code: "auth" }; }
+    if (r.status === 403) throw { code: "edit_required" };
+    if (r.status === 413) throw { code: "too_large" };
+    if (r.status === 507) throw { code: "quota_exceeded" };
+    if (!r.ok) throw { code: "unavailable" };
+    return r.status === 204 ? null : r.json();
+  };
+  // apply locally at once; the server's broadcast confirms or corrects it
+  const local = (fn) => { fn(); changed(); };
+  return {
+    savePerson: (id, d) => { local(() => people.set(id, d)); return req("PUT", "people/" + encodeURIComponent(id), d); },
+    deletePerson: (id) => { local(() => people.delete(id)); return req("DELETE", "people/" + encodeURIComponent(id)); },
+    setRelation: (id, d) => { local(() => relations.set(id, d)); return req("PUT", "relations/" + encodeURIComponent(id), d); },
+    deleteRelation: (id) => { local(() => relations.delete(id)); return req("DELETE", "relations/" + encodeURIComponent(id)); },
+    setPhoto: (id, data) => { local(() => photos.set(id, { data })); return req("PUT", "photos/" + encodeURIComponent(id), { data }); },
+    deletePhoto: (id) => { local(() => photos.delete(id)); return req("DELETE", "photos/" + encodeURIComponent(id)); },
+  };
+}
+/* 3) this browser only (opened as a plain file) */
+function localStore() {
+  const KEY = "vanshavali-local-v1";
+  let raw = {};
+  try { raw = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { raw = {}; }
+  people = new Map(Object.entries(raw.people || {}));
+  relations = new Map(Object.entries(raw.relations || {}));
+  photos = new Map(Object.entries(raw.photos || {}));
+  const persist = () => {
+    try { localStorage.setItem(KEY, JSON.stringify({ people: Object.fromEntries(people), relations: Object.fromEntries(relations), photos: Object.fromEntries(photos) })); }
+    catch (e) { toast(t("e_storage"), true); }
+    changed();
+  };
+  const wrap = (fn) => async (...a) => { fn(...a); persist(); };
+  return {
+    savePerson: wrap((id, d) => people.set(id, d)),
+    deletePerson: wrap((id) => people.delete(id)),
+    setRelation: wrap((id, d) => relations.set(id, d)),
+    deleteRelation: wrap((id) => relations.delete(id)),
+    setPhoto: wrap((id, data) => photos.set(id, { data })),
+    deletePhoto: wrap((id) => photos.delete(id)),
+  };
+}
+
+function setStatus(kind, key) { statusKind = kind; statusKey = key; $("#status").className = "status " + kind; $("#statusText").textContent = t(key); }
+const liveKey = () => mode === "server" ? (writable ? "st_live_edit" : "st_live_view") : "st_live";
+function applyWritable() {
+  $("#addPersonBtn").hidden = !writable || mode === "locked";
+  const eb = $("#editBtn");
+  eb.hidden = mode !== "server";
+  eb.classList.toggle("on", writable);
+  eb.setAttribute("aria-label", t(writable ? "lock_edit" : "unlock_edit")); eb.title = t(writable ? "lock_edit" : "unlock_edit");
+  eb.querySelector(".lb-text").textContent = t(writable ? "editing_word" : "edit_word");
+  $("#tabAdd").querySelector("[data-t]").textContent = t(writable || mode !== "server" ? "tab_add" : "tab_edit");
+  const canStart = loaded.people && people.size === 0 && mode !== "locked" && (writable || mode === "server");
+  $("#ovBtn").hidden = !canStart;
+  $("#ovBtn").textContent = t(writable ? "add_first" : "unlock_btn");
+}
+
+async function boot() {
+  if (window.claude && typeof window.claude.use === "function") return bootArtifact();
+  if (/^https?:$/.test(location.protocol)) {
+    try { const r = await fetch("api/session", { credentials: "same-origin" }); if (r.ok) return bootServer(await r.json()); } catch (e) {}
+  }
+  mode = "local"; store = localStore(); loaded.people = true;
+  setStatus("warn", "st_local"); changed();
+}
+
+async function bootArtifact() {
+  let db = null, user = null;
+  try { db = await window.claude.use("db"); } catch (e) { db = null; }
+  if (!db) { mode = "local"; store = localStore(); loaded.people = true; setStatus("warn", "st_local"); changed(); return; }
+  mode = "shared"; store = artifactStore(db);
+  setStatus("", "st_connecting");
+  try { user = await window.claude.use("user"); } catch (e) { user = null; }
+  if (user) { try { const can = await user.can("data.write"); if (can === false) writable = false; } catch (e) {} }
+  const timer = setTimeout(() => { if (!loaded.people) { setStatus("warn", "st_offline"); ovState = "still"; renderOverlay(); } }, 10000);
+  const onErr = (e) => { clearTimeout(timer); setStatus("warn", "st_stopped"); console.warn(e); };
+  db.collection("people").onSnapshot((s) => {
+    people = new Map(s.docs.map((d) => [d.id, d.data()]));
+    if (!s.metadata.fromCache) clearTimeout(timer);
+    loaded.people = true; setStatus("live", writable ? "st_live" : "st_view"); changed();
+  }, onErr);
+  db.collection("relations").onSnapshot((s) => { relations = new Map(s.docs.map((d) => [d.id, d.data()])); changed(); }, onErr);
+  db.collection("photos").onSnapshot((s) => { photos = new Map(s.docs.map((d) => [d.id, d.data()])); changed(); }, onErr);
+}
+
+let es = null;
+function applyServerState(st) {
+  people = new Map(Object.entries(st.people || {}));
+  relations = new Map(Object.entries(st.relations || {}));
+  photos = new Map(Object.entries(st.photos || {}).map(([id, v]) => [id, { data: "api/photos/" + encodeURIComponent(id) + "?v=" + v }]));
+  loaded.people = true; changed();
+}
+async function bootServer(session) {
+  mode = "server"; store = serverStore(); writable = !!session.canEdit;
+  if (session.needPasscode && !session.ok) { showPasscode(); return; }
+  startServerSync();
+}
+async function startServerSync() {
+  mode = "server"; setStatus("", "st_connecting");
+  try {
+    const r = await fetch("api/state", { credentials: "same-origin" });
+    if (r.status === 401) { showPasscode(); return; }
+    applyServerState(await r.json());
+    setStatus("live", liveKey());
+  } catch (e) { setStatus("warn", "st_offline"); }
+  if (es) es.close();
+  es = new EventSource("api/events");
+  es.onmessage = (ev) => { try { applyServerState(JSON.parse(ev.data)); setStatus("live", liveKey()); } catch (e) {} };
+  es.onerror = () => { setStatus("warn", "st_reconnecting"); };
+}
+function showPasscode() {
+  if (es) { es.close(); es = null; }
+  mode = "locked"; ovState = "pass"; renderOverlay(); applyWritable();
+  showPanel(false);
+  requestAnimationFrame(() => $("#passIn").focus());
+}
+$("#passForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector("button"); btn.disabled = true; $("#passErr").textContent = "";
+  try {
+    const r = await fetch("api/login", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ passcode: $("#passIn").value }) });
+    if (r.ok) { $("#passIn").value = ""; ovState = "loading"; renderOverlay(); store = serverStore(); startServerSync(); }
+    else $("#passErr").textContent = t(r.status === 429 ? "pass_many" : "pass_wrong");
+  } catch (err) { $("#passErr").textContent = t("e_generic"); }
+  finally { btn.disabled = false; }
+});
+
+async function run(fn, okMsg) {
+  try { await fn(); if (okMsg) toast(okMsg); return true; }
+  catch (e) {
+    console.warn(e);
+    const code = e && e.code;
+    if (code === "invalid_argument" && mode === "shared") { writable = false; applyWritable(); setStatus("", "st_view"); toast(t("e_view_only"), true); renderPanel(); }
+    else if (code === "quota_exceeded") toast(t("e_quota"), true);
+    else if (code === "too_large") toast(t("e_too_large"), true);
+    else if (code === "auth") toast(t("e_auth"), true);
+    else if (code === "edit_required") { setWritable(false); toast(t("e_edit_required"), true); openUnlock(); return false; }
+    else toast(t("e_generic"), true);
+    if (mode === "server" && code !== "auth") startServerSync();
+    return false;
+  }
+}
+
+/* ================= render scheduling ================= */
+let raf = 0, ovState = "loading";
+function changed() { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; rebuildIndex(); renderAll(); }); }
+function renderOverlay() {
+  const ov = $("#overlay");
+  $("#passForm").hidden = ovState !== "pass";
+  if (ovState === "pass") {
+    ov.hidden = false; $("#ovTitle").textContent = t("pass_title"); $("#ovText").textContent = t("pass_text"); $("#ovBtn").hidden = true; return;
+  }
+  if (!loaded.people) {
+    ov.hidden = false;
+    $("#ovTitle").textContent = t(ovState === "still" ? "still_title" : "loading_title");
+    $("#ovText").textContent = t(ovState === "still" ? "still_text" : "loading_text");
+  } else if (people.size === 0) {
+    ov.hidden = false; $("#ovTitle").textContent = t("empty_title"); $("#ovText").textContent = t(writable ? "empty_w" : mode === "server" ? "empty_locked" : "empty_r");
+  } else ov.hidden = true;
+}
+function renderAll() {
+  if (mode !== "locked") ovState = loaded.people ? "ready" : ovState;
+  renderTree(); applyWritable(); renderOverlay(); renderFamily();
+  if (sel && !people.has(sel)) { sel = null; panelMode = "view"; }
+  const formOpen = panelMode === "edit" || panelMode.startsWith("add") || panelMode === "link" || panelMode === "new";
+  if (!formOpen) renderPanel();
+  else if (sel === null && panelMode !== "new") closePanel();
+  if (!fittedOnce && people.size && lastLayout && viewMode === "tree") { fittedOnce = true; fit(); }
+}
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach((n) => (n.textContent = t(n.dataset.t)));
+  document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  $("#q").placeholder = t("search_ph"); $("#q").setAttribute("aria-label", t("search_ph"));
+  $("#passIn").placeholder = t("pass_ph"); $("#passIn").setAttribute("aria-label", t("pass_ph"));
+  $("#zIn").setAttribute("aria-label", t("zoom_in")); $("#zOut").setAttribute("aria-label", t("zoom_out"));
+  $("#zFit").setAttribute("aria-label", t("zoom_fit")); $("#zFit").title = t("zoom_fit");
+  $("#tree").setAttribute("aria-label", t("tree_label")); $("#panel").setAttribute("aria-label", t("panel_label"));
+  $("#legend").setAttribute("aria-label", t("legend_parent") + ", " + t("legend_married"));
+  $("#statusText").textContent = t(statusKey);
+  $("#searchBtn").setAttribute("aria-label", t("search")); $("#searchBtn").title = t("search");
+  $("#viewTog").setAttribute("aria-label", t("view_family") + " / " + t("view_tree"));
+  renderOverlay(); rebuildIndex(); renderTree(); renderFamily(); renderPanel(); renderResults(); applyWritable();
+}
+/* ---------- views ---------- */
+function setView(v, opts = {}) {
+  viewMode = v; try { localStorage.setItem("vanshavali-view", v); } catch (e) {}
+  const st = $("#stage"); st.classList.toggle("view-family", v === "family"); st.classList.toggle("view-tree", v === "tree");
+  document.querySelectorAll("[data-view]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === v)));
+  renderFamily();
+  if (v === "tree") {
+    renderTree();
+    if (!fittedOnce && lastLayout) { fittedOnce = true; fit(); }
+    if (opts.center) centerOn(opts.center);
+  } else if (opts.top !== false) $("#family").scrollTop = 0;
+}
+document.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => setView(b.dataset.view)));
+function setFocus(id, push = true) {
+  if (!id || !people.has(id)) return;
+  if (push && focus && focus !== id && people.has(focus)) { hist.push(focus); if (hist.length > 50) hist.shift(); }
+  focus = id; try { localStorage.setItem("vanshavali-focus", id); } catch (e) {}
+  renderFamily(); $("#family").scrollTop = 0;
+}
+function defaultFocus() {
+  if (focus && people.has(focus)) return focus;
+  const ids = [...people.keys()].sort((a, b) => (people.get(a).createdAt || 0) - (people.get(b).createdAt || 0));
+  // prefer the first-added person who has the most direct relatives, so the first screen is a full one
+  let best = ids[0], score = -1;
+  for (const id of ids.slice(0, 40)) { const sc = parentsOf(id).length + childrenOf(id).length + spousesOf(id).length; if (sc > score) { best = id; score = sc; } }
+  return best;
+}
+const famCard = (id, label) => {
+  const p = people.get(id), ll = lifeLine(p);
+  return `<button class="pcard" type="button" data-act="focus" data-id="${esc(id)}"><span class="pav">${avatarHtml(id)}</span><span class="ptext">${label ? `<span class="prel">${esc(label)}</span>` : ""}<span class="pname">${esc(nm(id))}</span>${ll ? `<span class="pmeta">${esc(ll)}</span>` : ""}</span></button>`;
+};
+const addCard = (rel, withId) => writable ? `<button class="pcard add" type="button" data-act="famadd" data-rel="${rel}"${withId !== undefined ? ` data-with="${esc(withId)}"` : ""}><span class="pav">+</span><span class="ptext"><span class="pname">${esc(t("add_rel_btn", { r: relWord(rel, focus) }))}</span></span></button>` : "";
+const miniChip = (id, label) => `<button class="mini" type="button" data-act="focus" data-id="${esc(id)}"><span class="pav">${avatarHtml(id)}</span><span class="tx"><small>${esc(label)}</small><b>${esc(nm(id))}</b></span></button>`;
+const ICON_PARENT = '<svg width="22" height="12" aria-hidden="true"><path d="M3 1V6H19V11" fill="none" stroke="var(--edge)" stroke-width="1.6"></path></svg>';
+const ICON_MARRIED = '<svg width="22" height="12" aria-hidden="true"><path d="M3 6H19" stroke="var(--knot)" stroke-width="5" stroke-linecap="round"></path><path d="M3 6H19" stroke="var(--bg)" stroke-width="1.6"></path></svg>';
+function renderFamily() {
+  const fam = $("#family");
+  if (viewMode !== "family" || mode === "locked" || !people.size) { fam.hidden = true; fam.innerHTML = ""; return; }
+  fam.hidden = false;
+  focus = defaultFocus();
+  const p = people.get(focus);
+  const labels = new Map(relativesOf(focus).map((r) => [r.id, lang === "hi" ? r.hi : r.en]));
+  const L = (id) => labels.get(id) || "";
+  const ps = parentsOf(focus);
+  const father = ps.find((x) => people.get(x).gender === "male"), mother = ps.find((x) => people.get(x).gender === "female" && x !== father);
+  const otherParents = ps.filter((x) => x !== father && x !== mother);
+  const parentCards = [father ? famCard(father, L(father)) : addCard("father"), mother ? famCard(mother, L(mother)) : addCard("mother"), ...otherParents.map((x) => famCard(x, L(x)))].filter(Boolean);
+  const gps = [...new Set(ps.flatMap(parentsOf))];
+  const sp = spousesOf(focus), kids = childrenOf(focus).sort(byAge), sibs = siblingsOf(focus).sort(byAge);
+  const gks = [...new Set(kids.flatMap(childrenOf))];
+  const age = ageOf(p), gotra = tx(p, "gotra");
+  const meta = [lifeLine(p), age != null && !p.dod ? t("years", { n: age }) : "", gotra ? t("gotra_meta", { g: gotra }) : ""].filter(Boolean).join(" · ");
+  const alt = txAlt(p, "name");
+  const prev = hist.length ? hist[hist.length - 1] : null;
+  const sec = (title, icon, inner) => inner ? `<section class="fam-sec"><h3 class="fam-h">${icon || ""}<span>${esc(title)}</span></h3>${inner}</section>` : "";
+  const grid = (cards) => cards.filter(Boolean).length ? `<div class="grid2">${cards.join("")}</div>` : "";
+  const spouseAdd = !sp.length ? addCard("spouse") : "";
+  const kidAdds = writable ? [addCard("son"), addCard("daughter")] : [];
+  // with more than one marriage, show each couple's children separately, each with its own add buttons
+  const spo = spousesInOrder(focus);
+  let kidsHtml = "";
+  if (spo.length > 1 || (spo.length === 1 && kids.some((c) => !S(idx.parents, c).has(spo[0])))) {
+    const otherOf = (c) => parentsOf(c).find((x) => x !== focus);
+    const used = new Set();
+    for (const s of spo) {
+      const ks = kids.filter((c) => S(idx.parents, c).has(s)); ks.forEach((c) => used.add(c));
+      const adds = writable ? [addCard("son", s), addCard("daughter", s)] : [];
+      if (ks.length || adds.length) kidsHtml += (kidsHtml ? '<div class="gap" style="height:16px"></div>' : "") + sec(t("kids_with", { n: nm(s) }), ICON_PARENT, grid([...ks.map((x) => famCard(x, L(x))), ...adds]));
+    }
+    const rest = kids.filter((c) => !used.has(c));
+    const byOther = new Map(); rest.forEach((c) => { const o = otherOf(c) || ""; if (!byOther.has(o)) byOther.set(o, []); byOther.get(o).push(c); });
+    for (const [o, ks] of byOther) kidsHtml += '<div class="gap" style="height:16px"></div>' + sec(o ? t("kids_with", { n: nm(o) }) : t("kids_other"), ICON_PARENT, grid(ks.map((x) => famCard(x, L(x)))));
+  } else if (kids.length || kidAdds.length) kidsHtml = sec(t("sec_children"), ICON_PARENT, grid([...kids.map((x) => famCard(x, L(x))), ...kidAdds]));
+  const sibAdds = writable ? [addCard("brother"), addCard("sister")] : [];
+  fam.innerHTML = `<div class="fam-col">
+    <div class="fam-top">
+      ${prev && people.has(prev) ? `<button class="back" type="button" data-act="famback"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg><span>${esc(t("back_to", { n: nm(prev) }))}</span></button>` : `<p class="note">${esc(t("tap_hint"))}</p>`}
+    </div>
+    ${gps.length ? sec(t("sec_grandparents"), "", `<div class="mini-row">${gps.map((x) => miniChip(x, L(x))).join("")}</div>`) + '<div class="gap"></div>' : ""}
+    ${sec(t("sec_parents"), ICON_PARENT, grid(parentCards))}
+    ${parentCards.length ? '<div class="vline"></div>' : ""}
+    <div class="focus" data-act="details">
+      <div class="avatar fav">${avatarHtml(focus)}</div>
+      <div style="min-width:0"><h2>${esc(nm(focus))}</h2>${alt ? `<p class="alt">${esc(alt)}</p>` : ""}${meta ? `<p class="meta">${esc(meta)}</p>` : ""}</div>
+      <div class="cta">
+        <button class="btn primary" type="button" data-act="details">${esc(t("full_details"))}</button>
+        <button class="btn" type="button" data-act="seetree">${esc(t("see_in_tree"))}</button>
+      </div>
+    </div>
+    ${sp.length || spouseAdd ? '<div class="gap" style="height:14px"></div>' + sec(t("sec_spouse"), ICON_MARRIED, grid([...spousesInOrder(focus).map((x) => famCard(x, L(x))), spouseAdd])) : ""}
+    ${kidsHtml ? '<div class="vline"></div>' + kidsHtml : ""}
+    ${gks.length ? '<div class="gap" style="height:14px"></div>' + sec(t("sec_grandchildren"), "", `<div class="mini-row">${gks.map((x) => miniChip(x, L(x))).join("")}</div>`) : ""}
+    ${sibs.length || sibAdds.length ? '<div class="gap"></div>' + sec(t("sec_siblings"), "", grid([...sibs.map((x) => famCard(x, L(x))), ...sibAdds])) : ""}
+  </div>`;
+}
+$("#family").addEventListener("click", (e) => {
+  const tg = e.target.closest("[data-act]"); if (!tg) return;
+  const act = tg.dataset.act;
+  if (act === "focus") setFocus(tg.dataset.id);
+  else if (act === "famback") { const prev = hist.pop(); if (prev) setFocus(prev, false); }
+  else if (act === "details") select(focus);
+  else if (act === "seetree") { sel = focus; setView("tree", { center: focus }); renderTree(); }
+  else if (act === "famadd") { sel = focus; addWith = tg.dataset.with !== undefined ? tg.dataset.with : null; panelMode = "add:" + tg.dataset.rel; editLinks = false; renderPanel(); }
+});
+document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => {
+  if (lang === b.dataset.lang) return;
+  lang = b.dataset.lang; try { localStorage.setItem("vanshavali-lang", lang); } catch (e) {}
+  applyLang();
+}));
+
+/* ================= layout ================= */
+function layout() {
+  const ids = [...people.keys()].sort((a, b) => (people.get(a).createdAt || 0) - (people.get(b).createdAt || 0) || (a < b ? -1 : 1));
+  const gen = new Map(), order = [];
+  for (const s of ids) {
+    if (gen.has(s)) continue;
+    const comp = []; gen.set(s, 0); const q = [s];
+    while (q.length) {
+      const u = q.shift(); comp.push(u); const gu = gen.get(u);
+      for (const p of S(idx.parents, u)) if (!gen.has(p)) { gen.set(p, gu - 1); q.push(p); }
+      for (const v of S(idx.spouses, u)) if (!gen.has(v)) { gen.set(v, gu); q.push(v); }
+      for (const v of S(idx.sibx, u)) if (!gen.has(v)) { gen.set(v, gu); q.push(v); }
+      for (const c of S(idx.children, u)) if (!gen.has(c)) { gen.set(c, gu + 1); q.push(c); }
+    }
+    const m = Math.min(...comp.map((c) => gen.get(c)));
+    comp.forEach((c) => gen.set(c, gen.get(c) - m));
+    order.push(...comp);
+  }
+  const unitOf = new Map(), units = [];
+  for (const u of order) {
+    if (unitOf.has(u)) continue;
+    const mem = [], st = [u]; unitOf.set(u, null);
+    while (st.length) { const x = st.pop(); mem.push(x); for (const s of S(idx.spouses, x)) if (!unitOf.has(s) && gen.get(s) === gen.get(x)) { unitOf.set(s, null); st.push(s); } }
+    const unit = { members: mem, gen: gen.get(u), x: 0, w: 0, pset: new Set() };
+    mem.forEach((m) => { unitOf.set(m, unit); S(idx.parents, m).forEach((p) => unit.pset.add(p)); });
+    if (mem.length > 2) {
+      const sc = (m) => [...S(idx.spouses, m)].filter((s) => mem.includes(s)).length;
+      const hub = mem.slice().sort((a, b) => sc(b) - sc(a))[0];
+      const rest = mem.filter((m) => m !== hub);
+      const half = Math.floor(rest.length / 2);
+      unit.members = [...rest.slice(0, half), hub, ...rest.slice(half)];
+    } else if (mem.length === 2) {
+      const [a, b] = mem;
+      if (people.get(a).gender !== "male" && people.get(b).gender === "male") unit.members = [b, a];
+    }
+    unit.w = unit.members.length * NODE_W + (unit.members.length - 1) * SPOUSE_GAP;
+    units.push(unit);
+  }
+  const rows = new Map();
+  units.forEach((u) => { if (!rows.has(u.gen)) rows.set(u.gen, []); rows.get(u.gen).push(u); });
+  const gens = [...rows.keys()].sort((a, b) => a - b);
+  const X = new Map();
+  const off = (u, i) => -u.w / 2 + NODE_W / 2 + i * (NODE_W + SPOUSE_GAP);
+  const updX = (row) => row.forEach((u) => u.members.forEach((m, i) => X.set(m, u.x + off(u, i))));
+  const gapBetween = (a, b) => { for (const p of a.pset) if (b.pset.has(p)) return UNIT_GAP; return FAMILY_GAP; };
+  const pAvg = (m, g) => { const ps = [...S(idx.parents, m)].filter((p) => gen.get(p) < g && X.has(p)); return ps.length ? mean(ps.map((p) => X.get(p))) : null; };
+  const parentBary = (u) => {
+    let s = 0, n = 0;
+    u.members.forEach((m, i) => { const a = pAvg(m, u.gen); if (a != null) { s += a - off(u, i); n++; } });
+    return n ? s / n : null;
+  };
+  const childBary = (u) => {
+    const cs = new Set();
+    u.members.forEach((m) => S(idx.children, m).forEach((c) => { if (gen.get(c) > u.gen && X.has(c)) cs.add(c); }));
+    return cs.size ? mean([...cs].map((c) => X.get(c))) : null;
+  };
+  const orderMembers = (u) => {
+    if (u.members.length !== 2) return;
+    const [a, b] = u.members; const pa = pAvg(a, u.gen), pb = pAvg(b, u.gen);
+    if (pa != null && pb != null && pa > pb) u.members = [b, a];
+  };
+  const pack = (row) => {
+    let x = 0;
+    row.forEach((u, i) => { if (i) x += (row[i - 1].w + u.w) / 2 + gapBetween(row[i - 1], u); u.x = x; });
+    const mid = x / 2; row.forEach((u) => (u.x -= mid));
+  };
+  const sortBy = (row, keyFn) => {
+    row.forEach((u, i) => { const k = keyFn(u); u._k = k == null ? u.x : k; u._i = i; });
+    row.sort((a, b) => a._k - b._k || a._i - b._i);
+  };
+  const placeRow = (row, desired) => {
+    const n = row.length; if (!n) return;
+    const c = [0];
+    for (let i = 1; i < n; i++) c[i] = c[i - 1] + (row[i - 1].w + row[i].w) / 2 + gapBetween(row[i - 1], row[i]);
+    const blocks = [];
+    for (let i = 0; i < n; i++) {
+      blocks.push({ s: desired[i] - c[i], n: 1, i0: i });
+      while (blocks.length > 1) {
+        const b = blocks[blocks.length - 1], a = blocks[blocks.length - 2];
+        if (a.s / a.n > b.s / b.n) { a.s += b.s; a.n += b.n; blocks.pop(); } else break;
+      }
+    }
+    for (const b of blocks) { const m = b.s / b.n; for (let j = b.i0; j < b.i0 + b.n; j++) row[j].x = m + c[j]; }
+  };
+  gens.forEach((g) => { pack(rows.get(g)); updX(rows.get(g)); });
+  for (let it = 0; it < 6; it++) {
+    for (const g of gens) { const row = rows.get(g); row.forEach(orderMembers); sortBy(row, parentBary); pack(row); updX(row); }
+    if (it === 5) break;
+    for (const g of [...gens].reverse()) { const row = rows.get(g); sortBy(row, childBary); pack(row); updX(row); }
+  }
+  for (let it = 0; it < 12; it++) {
+    for (const g of gens) { const row = rows.get(g); placeRow(row, row.map((u) => parentBary(u) ?? u.x)); updX(row); }
+    for (const g of [...gens].reverse()) { const row = rows.get(g); placeRow(row, row.map((u) => childBary(u) ?? u.x)); updX(row); }
+  }
+  // each generation is as tall as its tallest box, so wrapped names never run into the next row
+  const B = new Map(); for (const id of ids) B.set(id, nodeBox(id));
+  const rowH = new Map(); for (const id of ids) rowH.set(gen.get(id), Math.max(rowH.get(gen.get(id)) || 0, B.get(id).h));
+  const rowTop = new Map(); let acc = 0;
+  const allGens = [...new Set(ids.map((i) => gen.get(i)))].sort((a, b) => a - b);
+  for (const g of allGens) { rowTop.set(g, acc); acc += rowH.get(g) + ROW_GAP; }
+  const Y = new Map(); for (const id of ids) Y.set(id, rowTop.get(gen.get(id)));
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const id of ids) { minX = Math.min(minX, X.get(id) - NODE_W / 2); maxX = Math.max(maxX, X.get(id) + NODE_W / 2); minY = Math.min(minY, Y.get(id)); maxY = Math.max(maxY, Y.get(id) + B.get(id).h); }
+  return { X, Y, B, gen, bounds: { minX, maxX, minY, maxY } };
+}
+
+/* ================= tree render ================= */
+const gEdges = $("#gEdges"), gNodes = $("#gNodes");
+function relatedSet(id) {
+  if (!id || !people.has(id)) return new Set();
+  return new Set([...parentsOf(id), ...childrenOf(id), ...spousesOf(id), ...siblingsOf(id)]);
+}
+function renderTree() {
+  gEdges.replaceChildren(); gNodes.replaceChildren();
+  if (!people.size || mode === "locked") { lastLayout = null; return; }
+  const L = layout(); lastLayout = L;
+  const { X, Y, B } = L;
+  const cy = (id) => Y.get(id) + NODE_H / 2, bot = (id) => Y.get(id) + B.get(id).h;
+  const rel = relatedSet(sel);
+  const knots = [];
+
+  const spouseDone = new Set();
+  for (const [a, set] of idx.spouses) for (const b of set) {
+    const k = rid("spouse", a, b); if (spouseDone.has(k)) continue; spouseDone.add(k);
+    const [l, r] = X.get(a) <= X.get(b) ? [a, b] : [b, a];
+    let d;
+    const sameRow = Y.get(l) === Y.get(r), adjacent = sameRow && Math.abs(X.get(r) - X.get(l) - (NODE_W + SPOUSE_GAP)) < 1;
+    if (adjacent) { d = `M${X.get(l) + NODE_W / 2} ${cy(l)}H${X.get(r) - NODE_W / 2}`; knots.push([(X.get(l) + X.get(r)) / 2, cy(l)]); }
+    else if (sameRow) { const x1 = X.get(l), x2 = X.get(r), y = Y.get(l); d = `M${x1} ${y}C${x1} ${y - 46} ${x2} ${y - 46} ${x2} ${y}`; }
+    else d = `M${X.get(l)} ${cy(l)}L${X.get(r)} ${cy(r)}`;
+    const hl = sel && (a === sel || b === sel) ? " hl" : "";
+    el("path", { d, class: "e-spouse-outer" + hl }, gEdges);
+    el("path", { d, class: "e-spouse-inner" }, gEdges);
+  }
+
+  const fam = new Map();
+  for (const [c, ps] of idx.parents) {
+    const arr = [...ps].sort(); const k = arr.join("|");
+    if (!fam.has(k)) fam.set(k, { parents: arr, kids: [] });
+    fam.get(k).kids.push(c);
+  }
+  const stagger = new Map();
+  for (const f of fam.values()) {
+    const ps = f.parents, kids = f.kids;
+    const kidTop = Math.min(...kids.map((k) => Y.get(k)));
+    const si = stagger.get(kidTop) || 0; stagger.set(kidTop, si + 1);
+    const busY = kidTop - ROW_GAP / 2 + ((si % 3) - 1) * 9;
+    let sx, sy, d = "";
+    const married = ps.length === 2 && S(idx.spouses, ps[0]).has(ps[1]) && Y.get(ps[0]) === Y.get(ps[1]) && Math.abs(Math.abs(X.get(ps[0]) - X.get(ps[1])) - (NODE_W + SPOUSE_GAP)) < 1;
+    if (ps.length === 1) { sx = X.get(ps[0]); sy = bot(ps[0]); }
+    else if (married) { sx = (X.get(ps[0]) + X.get(ps[1])) / 2; sy = cy(ps[0]); }
+    else {
+      sx = mean(ps.map((p) => X.get(p))); sy = Math.max(...ps.map(bot)) + 16;
+      for (const p of ps) d += `M${X.get(p)} ${bot(p)}V${sy}H${sx}`;
+    }
+    if (ps.every((p) => bot(p) < busY - 4)) {
+      const xs = kids.map((k) => X.get(k));
+      d += `M${sx} ${sy}V${busY}`;
+      const lo = Math.min(sx, ...xs), hi = Math.max(sx, ...xs);
+      if (hi - lo > 0.5) d += `M${lo} ${busY}H${hi}`;
+      for (const k of kids) d += `M${X.get(k)} ${busY}V${Y.get(k)}`;
+    } else {
+      for (const k of kids) { const tx2 = X.get(k), ty = Y.get(k); d += `M${sx} ${sy}C${sx} ${sy + 60} ${tx2} ${ty - 60} ${tx2} ${ty}`; }
+    }
+    const hl = sel && (ps.includes(sel) || kids.includes(sel)) ? " hl" : "";
+    el("path", { d, class: "e-parent" + hl }, gEdges);
+  }
+
+  for (const r of relations.values()) {
+    if (r.type !== "sibling" || !people.has(r.a) || !people.has(r.b)) continue;
+    if (parentsOf(r.a).some((p) => S(idx.parents, r.b).has(p))) continue;
+    const [l, rr] = X.get(r.a) <= X.get(r.b) ? [r.a, r.b] : [r.b, r.a];
+    const x1 = X.get(l), x2 = X.get(rr), y1 = Y.get(l), y2 = Y.get(rr);
+    const h = Math.min(60, 26 + Math.abs(x2 - x1) * 0.08);
+    const hl = sel && (r.a === sel || r.b === sel) ? " hl" : "";
+    el("path", { d: `M${x1} ${y1}C${x1} ${y1 - h} ${x2} ${y2 - h} ${x2} ${y2}`, class: "e-sib" + hl }, gEdges);
+  }
+  for (const [x, y] of knots) el("circle", { cx: x, cy: y, r: 5, class: "knot" }, gEdges);
+
+  for (const id of people.keys()) {
+    const p = people.get(id);
+    const name = nm(id);
+    const cls = "node" + (id === sel ? " sel" : rel.has(id) ? " rel" : "");
+    const g = el("g", { class: cls, transform: `translate(${X.get(id) - NODE_W / 2},${Y.get(id)})`, "data-id": id, tabindex: "0", role: "button", "aria-label": t("open_details", { n: name }) }, gNodes);
+    el("title", {}, g).textContent = [tx(p, "name"), txAlt(p, "name")].filter(Boolean).join(" · ") || name;
+    const box = B.get(id);
+    el("rect", { class: "n-card", width: NODE_W, height: box.h, rx: 12 }, g);
+    el("circle", { class: "n-av", cx: 30, cy: 30, r: 21 }, g);
+    const ph = photos.get(id)?.data;
+    if (ph) el("image", { href: ph, x: 9, y: 9, width: 42, height: 42, "clip-path": "url(#avClip)", preserveAspectRatio: "xMidYMid slice" }, g);
+    else el("use", { href: "#sil", x: 13, y: 13, width: 34, height: 34, class: "n-sil" }, g);
+    const content = box.lines.length * LINE_H + (box.ll ? 16 : 0);
+    let y = (box.h - content) / 2 + 13;
+    for (const line of box.lines) { el("text", { class: "n-name", x: 60, y }, g).textContent = line; y += LINE_H; }
+    if (box.ll) el("text", { class: "n-sub", x: 60, y: y - 1 }, g).textContent = box.ll;
+  }
+  applyView();
+}
+
+/* ================= pan & zoom ================= */
+const svg = $("#tree"), vp = $("#viewport");
+const view = { x: 0, y: 0, k: 1 };
+function applyView() { vp.setAttribute("transform", `translate(${view.x},${view.y}) scale(${view.k})`); }
+const clampK = (k) => Math.max(0.15, Math.min(2.5, k));
+function zoomAt(cx, cy, k) { k = clampK(k); const wx = (cx - view.x) / view.k, wy = (cy - view.y) / view.k; view.k = k; view.x = cx - wx * k; view.y = cy - wy * k; applyView(); }
+function visibleBox() {
+  const r = svg.getBoundingClientRect(); let w = r.width, h = r.height;
+  const pr = $("#panel");
+  if (!pr.hidden) { const p = pr.getBoundingClientRect(); if (window.innerWidth > 720) w -= p.width; else h -= p.height; }
+  return { w: Math.max(w, 100), h: Math.max(h, 100) };
+}
+function fit() {
+  if (!lastLayout) return;
+  const { minX, maxX, minY, maxY } = lastLayout.bounds; const { w, h } = visibleBox(); const pad = 60;
+  let k = clampK(Math.min((w - pad * 2) / (maxX - minX), (h - pad * 2) / (maxY - minY), 1.1));
+  // on phones keep names readable: don't shrink below 0.6, and start from the top generation
+  const narrow = window.innerWidth <= 720 && k < 0.6;
+  if (narrow) k = 0.6;
+  view.k = k; view.x = w / 2 - ((minX + maxX) / 2) * k;
+  view.y = narrow ? 40 - minY * k : h / 2 - ((minY + maxY) / 2) * k; applyView();
+}
+function centerOn(id, onlyIfHidden) {
+  if (!lastLayout || !lastLayout.X.has(id)) return;
+  const { w, h } = visibleBox();
+  const x = lastLayout.X.get(id), y = lastLayout.Y.get(id) + NODE_H / 2;
+  const sx = view.x + x * view.k, sy = view.y + y * view.k;
+  if (onlyIfHidden && sx > 90 && sx < w - 90 && sy > 50 && sy < h - 50) return;
+  view.x = w / 2 - x * view.k; view.y = h / 2 - y * view.k; applyView();
+}
+const pointers = new Map(); let drag = null, pinch = null;
+const local = (e) => { const r = svg.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+svg.addEventListener("pointerdown", (e) => {
+  if (e.button !== 0 && e.pointerType === "mouse") return;
+  try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+  pointers.set(e.pointerId, local(e));
+  if (pointers.size === 1) { const pt = local(e); drag = { sx: pt.x, sy: pt.y, vx: view.x, vy: view.y, moved: false, target: e.target.closest?.(".node")?.dataset.id || null }; }
+  else if (pointers.size === 2) {
+    const [a, b] = [...pointers.values()];
+    pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, k: view.k, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2, vx: view.x, vy: view.y };
+    if (drag) drag.moved = true;
+  }
+});
+svg.addEventListener("pointermove", (e) => {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, local(e));
+  if (pinch && pointers.size >= 2) {
+    const [a, b] = [...pointers.values()];
+    const k = clampK(pinch.k * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d);
+    const cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
+    const wx = (pinch.cx - pinch.vx) / pinch.k, wy = (pinch.cy - pinch.vy) / pinch.k;
+    view.k = k; view.x = cx - wx * k; view.y = cy - wy * k; applyView();
+  } else if (drag) {
+    const pt = local(e); const dx = pt.x - drag.sx, dy = pt.y - drag.sy;
+    if (!drag.moved && Math.abs(dx) + Math.abs(dy) > 5) { drag.moved = true; svg.classList.add("grabbing"); }
+    if (drag.moved) { view.x = drag.vx + dx; view.y = drag.vy + dy; applyView(); }
+  }
+});
+function endPointer(e) {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.delete(e.pointerId);
+  if (pointers.size === 1 && pinch) { pinch = null; const pt = [...pointers.values()][0]; drag = { sx: pt.x, sy: pt.y, vx: view.x, vy: view.y, moved: true, target: null }; return; }
+  if (pointers.size === 0) {
+    if (drag && !drag.moved && e.type === "pointerup") { if (drag.target) select(drag.target); else if (!$("#panel").hidden && panelMode === "view") closePanel(); }
+    drag = null; pinch = null; svg.classList.remove("grabbing");
+  }
+}
+svg.addEventListener("pointerup", endPointer);
+svg.addEventListener("pointercancel", endPointer);
+svg.addEventListener("wheel", (e) => { e.preventDefault(); const pt = local(e); zoomAt(pt.x, pt.y, view.k * Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015))); }, { passive: false });
+svg.addEventListener("keydown", (e) => { const n = e.target.closest?.(".node"); if (n && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); select(n.dataset.id); } });
+$("#zIn").onclick = () => { const { w, h } = visibleBox(); zoomAt(w / 2, h / 2, view.k * 1.25); };
+$("#zOut").onclick = () => { const { w, h } = visibleBox(); zoomAt(w / 2, h / 2, view.k / 1.25); };
+$("#zFit").onclick = fit;
+
+/* ================= kinship ================= */
+/* Returns each relative with an English and a Hindi label. Hindi uses the specific kinship terms
+   (dada/nana, chacha/tau/mama, devar/jeth, ...), which depend on which side and on relative age. */
+function relativesOf(id) {
+  const me = people.get(id), out = [], seen = new Set([id]);
+  const g = (x) => people.get(x)?.gender;
+  const push = (x, en, hi, direct) => { if (seen.has(x) || !people.has(x)) return; seen.add(x); out.push({ id: x, en, hi, direct: direct || null }); };
+  const byG = (x, m, f, n) => G(g(x), m, f, n);
+  const parents = parentsOf(id).sort(byAge), spouses = spousesOf(id), sibs = siblingsOf(id).sort(byAge), kids = childrenOf(id).sort(byAge);
+
+  parents.forEach((p) => push(p, byG(p, "Father", "Mother", "Parent"), byG(p, "पिता", "माता", "अभिभावक"), rid("parent", p, id)));
+  spouses.forEach((s) => push(s, byG(s, "Husband", "Wife", "Spouse"), byG(s, "पति", "पत्नी", "जीवनसाथी"), rid("spouse", s, id)));
+  // step-parents: a parent's other husband or wife
+  parents.forEach((p) => spousesOf(p).forEach((sp) => { if (!parents.includes(sp)) push(sp, byG(sp, "Stepfather", "Stepmother", "Step-parent"), byG(sp, "सौतेले पिता", "सौतेली माँ", "सौतेले माता/पिता")); }));
+  const myParents = new Set(parents);
+  sibs.forEach((s) => {
+    const o = older(s, id);
+    const theirs = parentsOf(s);
+    // half-sibling: both have two known parents and share only one of them
+    const half = myParents.size >= 2 && theirs.length >= 2 && theirs.some((x) => myParents.has(x)) && !theirs.every((x) => myParents.has(x));
+    const hi = half ? byG(s, "सौतेला भाई", "सौतेली बहन", "सौतेले भाई-बहन")
+      : byG(s, o === true ? "बड़े भाई" : o === false ? "छोटा भाई" : "भाई", o === true ? "बड़ी बहन" : o === false ? "छोटी बहन" : "बहन", "भाई-बहन");
+    push(s, half ? byG(s, "Half-brother", "Half-sister", "Half-sibling") : byG(s, "Brother", "Sister", "Sibling"), hi, relations.has(rid("sibling", s, id)) ? rid("sibling", s, id) : null);
+  });
+  kids.forEach((c) => push(c, byG(c, "Son", "Daughter", "Child"), byG(c, "बेटा", "बेटी", "संतान"), rid("parent", id, c)));
+  // stepchildren: a husband's or wife's children from another marriage
+  spouses.forEach((sp) => childrenOf(sp).sort(byAge).forEach((c) => { if (!kids.includes(c)) push(c, byG(c, "Stepson", "Stepdaughter", "Stepchild"), byG(c, "सौतेला बेटा", "सौतेली बेटी", "सौतेली संतान")); }));
+
+  // grandparents: paternal (dada/dadi) or maternal (nana/nani)
+  parents.forEach((p) => parentsOf(p).sort(byAge).forEach((gp) => {
+    const side = g(p);
+    const en = byG(gp, "Grandfather", "Grandmother", "Grandparent") ;
+    const enS = side === "male" ? "Paternal " + en.toLowerCase() : side === "female" ? "Maternal " + en.toLowerCase() : en;
+    const hi = side === "male" ? byG(gp, "दादा", "दादी", "दादा-दादी") : side === "female" ? byG(gp, "नाना", "नानी", "नाना-नानी") : byG(gp, "दादा/नाना", "दादी/नानी", "दादा-नाना");
+    push(gp, enS, hi);
+  }));
+  // grandchildren: through a son (pota/poti) or a daughter (nati/natin)
+  kids.forEach((c) => childrenOf(c).sort(byAge).forEach((gc) => {
+    const side = g(c);
+    const hi = side === "male" ? byG(gc, "पोता", "पोती", "पोता-पोती") : side === "female" ? byG(gc, "नाती", "नातिन", "नाती-नातिन") : byG(gc, "पोता/नाती", "पोती/नातिन", "पोता/नाती");
+    push(gc, byG(gc, "Grandson", "Granddaughter", "Grandchild"), hi);
+  }));
+  // parents-in-law
+  spouses.forEach((s) => parentsOf(s).forEach((x) => push(x, byG(x, "Father-in-law", "Mother-in-law", "Parent-in-law"), byG(x, "ससुर", "सास", "सास-ससुर"))));
+  // spouse's siblings: husband's brother = jeth (older) / devar (younger), husband's sister = nanad; wife's brother = sala, wife's sister = sali
+  spouses.forEach((s) => siblingsOf(s).sort(byAge).forEach((x) => {
+    const o = older(x, s); let hi;
+    if (g(s) === "male") hi = byG(x, o === true ? "जेठ" : o === false ? "देवर" : "जेठ/देवर", "ननद", "ननद/देवर");
+    else if (g(s) === "female") hi = byG(x, "साला", "साली", "साला/साली");
+    else hi = byG(x, "जीजा/साला", "भाभी/साली", "रिश्तेदार");
+    push(x, byG(x, "Brother-in-law", "Sister-in-law", "Sibling-in-law"), hi);
+  }));
+  // siblings' spouses: brother's wife = bhabhi, sister's husband = jija
+  sibs.forEach((s) => spousesOf(s).forEach((x) => {
+    const hi = g(s) === "male" ? byG(x, "भाई के पति", "भाभी", "भाभी") : g(s) === "female" ? byG(x, "जीजा", "बहन की पत्नी", "जीजा") : byG(x, "जीजा", "भाभी", "रिश्तेदार");
+    push(x, byG(x, "Brother-in-law", "Sister-in-law", "Sibling-in-law"), hi);
+  }));
+  // children's spouses
+  kids.forEach((c) => spousesOf(c).forEach((x) => push(x, byG(x, "Son-in-law", "Daughter-in-law", "Child-in-law"), byG(x, "दामाद", "बहू", "दामाद/बहू"))));
+  // uncles and aunts, their spouses, and cousins
+  const cousins = [];
+  parents.forEach((p) => siblingsOf(p).sort(byAge).forEach((u) => {
+    const side = g(p), o = older(u, p);
+    let en, hi, spEn, spHi, cHi;
+    if (side === "male") {
+      if (g(u) === "male") { en = "Paternal uncle"; hi = o === true ? "ताऊ" : o === false ? "चाचा" : "चाचा/ताऊ"; spHi = o === true ? "ताई" : o === false ? "चाची" : "चाची/ताई"; spEn = "Paternal aunt"; cHi = ["चचेरा भाई", "चचेरी बहन"]; }
+      else { en = "Paternal aunt"; hi = "बुआ"; spHi = "फूफा"; spEn = "Paternal uncle"; cHi = ["फुफेरा भाई", "फुफेरी बहन"]; }
+    } else if (side === "female") {
+      if (g(u) === "male") { en = "Maternal uncle"; hi = "मामा"; spHi = "मामी"; spEn = "Maternal aunt"; cHi = ["ममेरा भाई", "ममेरी बहन"]; }
+      else { en = "Maternal aunt"; hi = "मौसी"; spHi = "मौसा"; spEn = "Maternal uncle"; cHi = ["मौसेरा भाई", "मौसेरी बहन"]; }
+    } else { en = byG(u, "Uncle", "Aunt", "Uncle/Aunt"); hi = byG(u, "चाचा/मामा", "बुआ/मौसी", "रिश्तेदार"); spEn = "Aunt/Uncle"; spHi = "रिश्तेदार"; cHi = ["चचेरा/ममेरा भाई", "चचेरी/ममेरी बहन"]; }
+    if (g(u) !== "male" && g(u) !== "female") { en = side === "male" ? "Paternal uncle/aunt" : side === "female" ? "Maternal uncle/aunt" : "Uncle/Aunt"; }
+    push(u, en, hi);
+    spousesOf(u).forEach((x) => push(x, spEn, spHi));
+    childrenOf(u).sort(byAge).forEach((c) => cousins.push([c, byG(c, cHi[0], cHi[1], cHi[0] + "/" + cHi[1])]));
+  }));
+  // nephews and nieces: brother's children = bhatija/bhatiji, sister's children = bhanja/bhanji
+  sibs.forEach((s) => childrenOf(s).sort(byAge).forEach((c) => {
+    const hi = g(s) === "male" ? byG(c, "भतीजा", "भतीजी", "भतीजा/भतीजी") : g(s) === "female" ? byG(c, "भांजा", "भांजी", "भांजा/भांजी") : byG(c, "भतीजा/भांजा", "भतीजी/भांजी", "भतीजा/भांजा");
+    push(c, byG(c, "Nephew", "Niece", "Nephew/Niece"), hi);
+  }));
+  cousins.forEach(([c, hi]) => push(c, "Cousin", hi));
+  return out;
+}
+function plural(label, n) {
+  if (n < 2 || lang === "hi") return label;
+  if (label.includes("/")) return label;
+  if (label.includes("-in-law")) { const [w, ...r] = label.split("-"); return (w === "Child" ? "Children" : w + "s") + "-" + r.join("-"); }
+  if (label === "Child") return "Children";
+  if (label === "Stepchild") return "Stepchildren";
+  if (/Grandchild$/.test(label)) return label.replace(/child$/, "children");
+  return label + "s";
+}
+
+/* ================= panel ================= */
+const panel = $("#panel"), body = $("#panelBody");
+let panelKey = "";
+function showPanel(v) { panel.hidden = !v; $("#stage").classList.toggle("panel-open", v); document.querySelector(".app").classList.toggle("panel-open", v); }
+const CHEV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>';
+const sheetbar = (act, title) => `<div class="sheetbar"><button class="back" type="button" data-act="${act}">${CHEV}<span>${esc(t("back"))}</span></button><span class="sb-title">${esc(title || "")}</span></div>`;
+function select(id) {
+  sel = id; panelMode = "view"; editLinks = false;
+  if (id && people.has(id) && focus !== id) { if (focus && people.has(focus)) hist.push(focus); focus = id; try { localStorage.setItem("vanshavali-focus", id); } catch (e) {} renderFamily(); }
+  showPanel(true); renderTree(); renderPanel(); centerOn(id, true);
+}
+function closePanel() { sel = null; panelMode = "view"; showPanel(false); renderTree(); }
+function avatarHtml(id) { const ph = photos.get(id)?.data; return ph ? `<img src="${esc(ph)}" alt="">` : SIL; }
+function chip(r) {
+  const name = nm(r.id);
+  const rm = editLinks && writable && r.direct ? `<button class="rm" type="button" data-act="unlink" data-rid="${esc(r.direct)}" aria-label="${esc(t("remove_link", { n: name }))}" title="${esc(t("remove_link", { n: name }))}">×</button>` : "";
+  return `<span class="chip"><button class="go" type="button" data-act="go" data-id="${esc(r.id)}"><span class="dot">${avatarHtml(r.id)}</span><span>${esc(name)}</span></button>${rm}</span>`;
+}
+const FACTS = [
+  { k: "dob", date: true }, { k: "dod", date: true }, { k: "phone", copy: true }, { k: "email", copy: true },
+  { k: "location", bi: true }, { k: "birthplace", bi: true }, { k: "gotra", bi: true }, { k: "occupation", bi: true }, { k: "notes", bi: true },
+];
+function renderPanel() {
+  const key = (sel || "") + "|" + panelMode;
+  if (key !== panelKey) { panelKey = key; requestAnimationFrame(() => { panel.scrollTop = 0; }); }
+  if (mode === "locked") { showPanel(false); return; }
+  if (panelMode === "new") { showPanel(true); body.innerHTML = personForm(null); focusFirst(); return; }
+  if (!sel || !people.has(sel)) { showPanel(false); return; }
+  showPanel(true);
+  const p = people.get(sel);
+  if (panelMode === "edit") { body.innerHTML = personForm(sel); focusFirst(); return; }
+  if (panelMode.startsWith("add:")) { body.innerHTML = addForm(sel, panelMode.slice(4)); focusFirst(); return; }
+  if (panelMode === "link") { body.innerHTML = linkForm(sel); return; }
+
+  const age = ageOf(p), gotra = tx(p, "gotra");
+  const meta = [p.gender === "male" || p.gender === "female" ? t(p.gender) : "", age != null ? t(p.dod ? "lived" : "years", { n: age }) : "", gotra ? t("gotra_meta", { g: gotra }) : ""].filter(Boolean).join(" · ");
+  const facts = FACTS.map((f) => {
+    const label = t("f_" + f.k);
+    const v = f.bi ? tx(p, f.k) : p[f.k];
+    if (!v) return `<dt>${esc(label)}</dt><dd class="empty">${esc(t("not_added"))}</dd>`;
+    const shown = f.date ? fmtDate(v) : v;
+    const copy = f.copy ? `<button class="copy" type="button" data-act="copy" data-v="${esc(v)}">${esc(t("copy"))}</button>` : "";
+    return `<dt>${esc(label)}</dt><dd><span class="val">${esc(shown)}</span>${copy}</dd>`;
+  }).join("");
+  const rels = relativesOf(sel);
+  const groups = new Map();
+  rels.forEach((r) => { const l = lang === "hi" ? r.hi : r.en; if (!groups.has(l)) groups.set(l, []); groups.get(l).push(r); });
+  const relHtml = rels.length ? [...groups].map(([label, list]) => `<div class="rel-g"><span class="lbl">${esc(plural(label, list.length))}</span><div class="chips">${list.map(chip).join("")}</div></div>`).join("")
+    : `<p class="note">${esc(t(writable ? "no_rel_w" : "no_rel_r"))}</p>`;
+  const hasDirect = rels.some((r) => r.direct);
+  const name = nm(sel), alt = txAlt(p, "name");
+  const B = (rel, key) => `<button class="btn" type="button" data-act="add" data-rel="${rel}">${esc(t(key))}</button>`;
+  body.innerHTML = `
+    ${sheetbar("close", name)}
+    <div class="head">
+      <div class="avatar">${avatarHtml(sel)}</div>
+      <div style="min-width:0"><h2>${esc(name)}</h2>${alt ? `<p class="alt">${esc(alt)}</p>` : ""}${meta ? `<p class="meta">${esc(meta)}</p>` : ""}</div>
+    </div>
+    ${writable ? `<div class="row-actions">
+      <button class="btn" type="button" data-act="edit">${esc(t("edit_details"))}</button>
+      <button class="btn" type="button" data-act="photo">${esc(t(photos.has(sel) ? "change_photo" : "upload_photo"))}</button>
+      ${photos.has(sel) ? `<button class="btn ghost" type="button" data-act="rmphoto">${esc(t("remove_photo"))}</button>` : ""}
+    </div>` : ""}
+    <section class="sec"><div class="sec-h"><h3>${esc(t("details"))}</h3></div><dl class="facts">${facts}</dl></section>
+    <section class="sec">
+      <div class="sec-h"><h3>${esc(t("relationships"))}</h3>${writable && hasDirect ? `<button class="linkish" type="button" data-act="editlinks">${esc(t(editLinks ? "done" : "edit_links"))}</button>` : ""}</div>
+      <div class="rels">${relHtml}</div>
+    </section>
+    ${writable ? `<section class="sec">
+      <div class="sec-h"><h3>${esc(t("add_relative", { n: name }))}</h3></div>
+      <div class="add-grid">
+        ${B("father", "b_father")}${B("mother", "b_mother")}${B("spouse", G(p.gender, "b_wife", "b_husband", "b_spouse"))}
+        ${B("son", "b_son")}${B("daughter", "b_daughter")}${B("brother", "b_brother")}${B("sister", "b_sister")}
+        <button class="btn ghost wide" type="button" data-act="link">${esc(t("link_existing"))}</button>
+      </div>
+    </section>` : ""}
+    ${!writable && mode === "server" ? `<div class="viewonly"><span>${esc(t("view_only_note"))}</span><button class="btn" type="button" data-act="unlock">${esc(t("unlock_btn"))}</button></div>` : ""}
+    ${p.updatedAt ? `<p class="note">${esc(t("last_updated", { d: new Date(p.updatedAt).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", { day: "numeric", month: "short", year: "numeric" }) }))}</p>` : ""}`;
+}
+function biField(k, p, prefix, opts = {}) {
+  const id = `${prefix}-${k}`, en = p ? p[k] || "" : "", hi = p ? p[k + "_hi"] || "" : "";
+  const area = opts.area;
+  const inp = (suffix, val, ph, l) => area
+    ? `<textarea id="${id}${suffix}" name="${k}${suffix}" placeholder="${esc(ph)}" lang="${l}">${esc(val)}</textarea>`
+    : `<input id="${id}${suffix}" name="${k}${suffix}" value="${esc(val)}" placeholder="${esc(ph)}" lang="${l}" autocomplete="off">`;
+  const enBox = `<div><label class="tag" for="${id}">${esc(t("in_en"))}</label>${inp("", en, t("ph_" + k) !== "ph_" + k ? t("ph_" + k) : "", "en")}</div>`;
+  const hiBox = `<div><label class="tag" for="${id}_hi">${esc(t("in_hi"))}</label>${inp("_hi", hi, t("ph_" + k + "_hi") !== "ph_" + k + "_hi" ? t("ph_" + k + "_hi") : "", "hi")}</div>`;
+  return `<fieldset class="bi"><legend>${esc(t("f_" + k))}</legend><div class="pair">${lang === "hi" ? hiBox + enBox : enBox + hiBox}</div></fieldset>`;
+}
+function plainField(k, v, prefix, type = "text") {
+  const id = `${prefix}-${k}`;
+  const ph = t("ph_" + k) !== "ph_" + k ? t("ph_" + k) : "";
+  return `<div class="field"><label for="${id}">${esc(t("f_" + k))}</label><input id="${id}" name="${k}" type="${type}" value="${esc(v)}" placeholder="${esc(ph)}"${type === "tel" ? ' inputmode="tel"' : ""}></div>`;
+}
+function genderField(v, prefix) {
+  const id = `${prefix}-gender`;
+  return `<div class="field"><label for="${id}">${esc(t("f_gender"))}</label><select id="${id}" name="gender">${["male", "female", "other"].map((g) => `<option value="${g}"${(v || "other") === g ? " selected" : ""}>${esc(t(g))}</option>`).join("")}</select></div>`;
+}
+function personForm(id) {
+  const p = id ? people.get(id) : { gender: "other" };
+  return `
+    ${sheetbar(id ? "cancel" : "close", "")}
+    <h2 class="ftitle">${esc(id ? t("edit_title", { n: nm(id) }) : t("new_title"))}</h2>
+    <p class="note">${esc(t("lang_hint"))}</p>
+    <form class="f" id="personForm" data-id="${esc(id || "")}" novalidate>
+      ${biField("name", p, "f")}
+      <div class="two">${genderField(p.gender, "f")}${plainField("phone", p.phone, "f", "tel")}</div>
+      <div class="two">${plainField("dob", p.dob, "f")}${plainField("dod", p.dod, "f")}</div>
+      ${plainField("email", p.email, "f", "email")}
+      ${biField("gotra", p, "f")}
+      ${biField("location", p, "f")}
+      ${biField("birthplace", p, "f")}
+      ${biField("occupation", p, "f")}
+      ${biField("notes", p, "f", { area: true })}
+      <p class="form-err" id="formErr" role="alert" hidden></p>
+      <div class="form-actions">
+        <button class="btn primary" type="submit">${esc(t(id ? "save" : "add"))}</button>
+        <button class="btn ghost" type="button" data-act="${id ? "cancel" : "close"}">${esc(t("cancel"))}</button>
+        <span class="spacer"></span>
+        ${id ? `<button class="btn danger" type="button" data-act="delete">${esc(t("del"))}</button>` : ""}
+      </div>
+    </form>`;
+}
+const REL = { father: "male", mother: "female", spouse: null, son: "male", daughter: "female", brother: "male", sister: "female" };
+const relWord = (rel, base) => rel === "spouse" ? t(G(people.get(base)?.gender, "r_wife", "r_husband", "r_spouse")) : t("r_" + rel);
+function addOptions(id, rel) {
+  const n = (x) => nm(x);
+  const opts = [];
+  if (rel === "father" || rel === "mother") {
+    const ps = parentsOf(id);
+    if (ps.length === 1) opts.push({ k: "marry", id: ps[0], label: t("o_marry", { n: n(ps[0]) }), on: !S(idx.spouses, ps[0]).size });
+    const sibs = siblingsOf(id).filter((s) => !parentsOf(s).length || ps.some((p) => S(idx.parents, s).has(p)));
+    sibs.forEach((s) => opts.push({ k: "alsoParent", id: s, label: t("o_also_parent", { r: t("r_" + rel), n: n(s) }), on: true }));
+  } else if (rel === "spouse") {
+    childrenOf(id).forEach((c) => opts.push({ k: "parentOf", id: c, label: t("o_parent_of", { n: n(c) }), on: parentsOf(c).length === 1 }));
+  } else if (rel === "son" || rel === "daughter") {
+    // one choice per marriage, plus "only this parent"; with several marriages nothing is preselected
+    const sp = spousesInOrder(id);
+    const pre = addWith !== null ? addWith : sp.length === 1 ? sp[0] : null;
+    sp.forEach((s) => opts.push({ k: "coParent", radio: true, id: s, label: t("o_pair", { a: n(id), b: n(s) }), on: pre === s }));
+    if (sp.length) opts.push({ k: "coParent", radio: true, id: "", label: t("o_pair_none", { a: n(id) }), on: pre === "" });
+  } else if (rel === "brother" || rel === "sister") {
+    parentsOf(id).forEach((p) => opts.push({ k: "sameParent", id: p, label: t("o_same_parent", { n: n(p) }), on: true }));
+  }
+  return opts;
+}
+function addForm(id, rel) {
+  const p = people.get(id);
+  const r = relWord(rel, id);
+  const g = REL[rel] || G(p.gender, "female", "male", "other");
+  const opts = addOptions(id, rel);
+  const radios = opts.some((o) => o.radio);
+  const optHtml = opts.length ? `<fieldset class="sec opts"${radios ? ' data-pick="1"' : ""}><legend><h3>${esc(t(radios ? "whose_child" : "also_link"))}</h3></legend>${opts.map((o, i) => `<label class="check"><input type="${o.radio ? "radio" : "checkbox"}"${o.radio ? ' name="pair"' : ""} id="opt-${i}" data-k="${o.k}" data-id="${esc(o.id)}"${o.on ? " checked" : ""}><span>${esc(o.label)}</span></label>`).join("")}</fieldset>` : "";
+  addWith = null;
+  const inheritGotra = ["father", "son", "daughter", "brother", "sister"].includes(rel);
+  const gotraSeed = inheritGotra ? { gotra: p.gotra || "", gotra_hi: p.gotra_hi || "" } : {};
+  return `
+    ${sheetbar(viewMode === "family" && isPhone() ? "close" : "cancel", "")}
+    <h2 class="ftitle">${esc(t("add_rel_title", { r, n: nm(id) }))}</h2>
+    <form class="f" id="addForm" data-id="${esc(id)}" data-rel="${rel}" novalidate>
+      ${biField("name", null, "a")}
+      <div class="two">${genderField(g, "a")}${plainField("dob", "", "a")}</div>
+      ${biField("gotra", gotraSeed, "a")}
+      ${optHtml}
+      <p class="form-err" id="formErr" role="alert" hidden></p>
+      <p class="note">${esc(t("later_note"))}</p>
+      <div class="form-actions"><button class="btn primary" type="submit">${esc(t("add_rel_btn", { r }))}</button><button class="btn ghost" type="button" data-act="cancel">${esc(t("cancel"))}</button></div>
+    </form>`;
+}
+function linkForm(id) {
+  const others = [...people.keys()].filter((x) => x !== id).sort(byName);
+  const head = `${sheetbar("cancel", "")}<h2 class="ftitle">${esc(t("link_title", { n: nm(id) }))}</h2>`;
+  if (!others.length) return head + `<p class="note">${esc(t("nobody_else"))}</p>`;
+  return head + `
+    <form class="f" id="linkForm" data-id="${esc(id)}">
+      <div class="field"><label for="l-who">${esc(t("link_person"))}</label><select id="l-who" name="who">${others.map((o) => { const ll = lifeLine(people.get(o)); return `<option value="${esc(o)}">${esc(nm(o))}${ll ? " (" + esc(ll) + ")" : ""}</option>`; }).join("")}</select></div>
+      <div class="field"><label for="l-rel">${esc(t("link_they", { n: nm(id) }))}</label>
+        <select id="l-rel" name="rel">
+          <option value="parent">${esc(t("l_parent"))}</option><option value="child">${esc(t("l_child"))}</option>
+          <option value="spouse">${esc(t("l_spouse"))}</option><option value="sibling">${esc(t("l_sibling"))}</option>
+        </select></div>
+      ${spousesOf(id).length ? `<div class="field" id="l-other-wrap" hidden><label for="l-other">${esc(t("link_other_parent"))}</label><select id="l-other" name="other">${spousesInOrder(id).map((x) => `<option value="${esc(x)}">${esc(nm(x))}</option>`).join("")}<option value="">${esc(t("none_other"))}</option></select></div>` : ""}
+      <p class="note">${esc(t("link_note"))}</p>
+      <div class="form-actions"><button class="btn primary" type="submit">${esc(t("link_btn"))}</button><button class="btn ghost" type="button" data-act="cancel">${esc(t("cancel"))}</button></div>
+    </form>`;
+}
+function focusFirst() { requestAnimationFrame(() => { const i = body.querySelector("input:not([type=checkbox]),select"); if (i && window.innerWidth > 720) i.focus(); }); }
+
+const newId = () => "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+async function addRel(type, a, b) {
+  if (a === b) return;
+  const id = rid(type, a, b);
+  if (relations.has(id)) return;
+  await store.setRelation(id, { type, a, b, createdAt: Date.now() });
+}
+
+body.addEventListener("click", async (e) => {
+  const tg = e.target.closest("[data-act]"); if (!tg) return;
+  const act = tg.dataset.act;
+  if (act === "close") { panelMode = "view"; closePanel(); }
+  else if (act === "cancel") { panelMode = "view"; renderPanel(); }
+  else if (act === "edit") { panelMode = "edit"; renderPanel(); }
+  else if (act === "unlock") { openUnlock(); }
+  else if (act === "add") { panelMode = "add:" + tg.dataset.rel; renderPanel(); }
+  else if (act === "link") { panelMode = "link"; renderPanel(); }
+  else if (act === "go") { select(tg.dataset.id); }
+  else if (act === "editlinks") { editLinks = !editLinks; renderPanel(); }
+  else if (act === "photo") { $("#photoInput").value = ""; $("#photoInput").click(); }
+  else if (act === "rmphoto") { await run(() => store.deletePhoto(sel), t("t_photo_removed")); }
+  else if (act === "unlink") { await run(() => store.deleteRelation(tg.dataset.rid), t("t_link_removed")); }
+  else if (act === "copy") {
+    const v = tg.dataset.v;
+    try { await navigator.clipboard.writeText(v); tg.textContent = t("copied"); setTimeout(() => (tg.textContent = t("copy")), 1400); }
+    catch (_) { const span = tg.parentElement.querySelector(".val"); const r = document.createRange(); r.selectNodeContents(span); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast(t("select_copy")); }
+  }
+  else if (act === "delete") {
+    if (!tg.classList.contains("armed")) { tg.classList.add("armed"); tg.textContent = t("del_confirm"); setTimeout(() => { if (tg.isConnected) { tg.classList.remove("armed"); tg.textContent = t("del"); } }, 4000); return; }
+    const id = sel, name = nm(id);
+    const rels = [...relations.entries()].filter(([, r]) => r.a === id || r.b === id).map(([k]) => k);
+    const ok = await run(async () => { for (const k of rels) await store.deleteRelation(k); if (photos.has(id)) await store.deletePhoto(id); await store.deletePerson(id); }, t("t_removed", { n: name }));
+    if (ok) { panelMode = "view"; closePanel(); }
+  }
+});
+
+const val = (fd, k) => String(fd.get(k) || "").trim();
+body.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target; const fd = new FormData(f);
+  const err = f.querySelector("#formErr");
+  if ((f.id === "personForm" || f.id === "addForm") && !val(fd, "name") && !val(fd, "name_hi")) {
+    if (err) { err.textContent = t("name_needed"); err.hidden = false; }
+    f.querySelector(lang === "hi" ? "[name=name_hi]" : "[name=name]").focus(); return;
+  }
+  const btn = f.querySelector("button[type=submit]"); btn.disabled = true;
+  try {
+    if (f.id === "personForm") {
+      const isNew = !f.dataset.id;
+      const id = f.dataset.id || newId();
+      const doc = isNew ? { createdAt: Date.now() } : { ...people.get(id) };
+      BI.forEach((k) => { doc[k] = val(fd, k); doc[k + "_hi"] = val(fd, k + "_hi"); });
+      ["gender", "dob", "dod", "phone", "email"].forEach((k) => (doc[k] = val(fd, k)));
+      doc.updatedAt = Date.now();
+      const label = tx(doc, "name");
+      const ok = await run(() => store.savePerson(id, doc), isNew ? t("t_added", { n: label }) : t("t_saved"));
+      if (ok) { sel = id; panelMode = "view"; if (isNew && people.size <= 1) fittedOnce = false; changed(); requestAnimationFrame(() => { renderPanel(); if (isNew) centerOn(id); }); }
+    } else if (f.id === "addForm") {
+      const base = f.dataset.id, rel = f.dataset.rel;
+      const nid = newId(), now = Date.now();
+      const doc = { name: val(fd, "name"), name_hi: val(fd, "name_hi"), gender: val(fd, "gender") || "other", dob: val(fd, "dob"), gotra: val(fd, "gotra"), gotra_hi: val(fd, "gotra_hi"), createdAt: now, updatedAt: now };
+      const pick = f.querySelector("[data-pick]");
+      if (pick && !f.querySelector("input[name=pair]:checked")) {
+        const err = f.querySelector("#formErr"); err.textContent = t("pick_pair"); err.hidden = false;
+        pick.scrollIntoView({ block: "center", behavior: "smooth" }); btn.disabled = false; return;
+      }
+      const opts = [...f.querySelectorAll("input[data-k]:checked")].map((c) => ({ k: c.dataset.k, id: c.dataset.id })).filter((o) => o.id);
+      const ok = await run(async () => {
+        await store.savePerson(nid, doc);
+        if (rel === "father" || rel === "mother") {
+          await addRel("parent", nid, base);
+          for (const o of opts) {
+            if (o.k === "marry") await addRel("spouse", nid, o.id);
+            if (o.k === "alsoParent") { await addRel("parent", nid, o.id); const sx = rid("sibling", base, o.id); if (relations.has(sx)) await store.deleteRelation(sx); }
+          }
+        } else if (rel === "spouse") {
+          await addRel("spouse", nid, base);
+          for (const o of opts) if (o.k === "parentOf") await addRel("parent", nid, o.id);
+        } else if (rel === "son" || rel === "daughter") {
+          await addRel("parent", base, nid);
+          for (const o of opts) if (o.k === "coParent") await addRel("parent", o.id, nid);
+        } else {
+          const sp = opts.filter((o) => o.k === "sameParent");
+          if (sp.length) { for (const o of sp) await addRel("parent", o.id, nid); }
+          else await addRel("sibling", base, nid);
+        }
+      }, t("t_added", { n: tx(doc, "name") }));
+      if (ok) {
+        panelMode = "view"; changed();
+        if (viewMode === "family" && isPhone()) closePanel(); else requestAnimationFrame(() => { renderPanel(); centerOn(nid, true); });
+      }
+    } else if (f.id === "linkForm") {
+      const base = f.dataset.id, who = val(fd, "who"), rel = val(fd, "rel");
+      let msg = null;
+      if (rel === "parent" && (siblingsOf(base).includes(who) || childrenOf(base).includes(who))) msg = t("e_parent_conflict");
+      if (rel === "child" && parentsOf(base).includes(who)) msg = t("e_child_conflict");
+      if (msg) toast(msg, true);
+      else {
+        const ok = await run(async () => {
+          if (rel === "parent") await addRel("parent", who, base);
+          else if (rel === "child") { await addRel("parent", base, who); const other = val(fd, "other"); if (other && other !== who && !relations.has(rid("parent", who, other))) await addRel("parent", other, who); }
+          else await addRel(rel, base, who);
+        }, t("t_linked"));
+        if (ok) { panelMode = "view"; changed(); requestAnimationFrame(renderPanel); }
+      }
+    }
+  } finally { if (btn.isConnected) btn.disabled = false; }
+});
+
+body.addEventListener("change", (e) => {
+  if (e.target.id === "l-rel") { const w = $("#l-other-wrap"); if (w) w.hidden = e.target.value !== "child"; }
+  if (e.target.name === "pair") { const err = body.querySelector("#formErr"); if (err) err.hidden = true; }
+});
+$("#photoInput").addEventListener("change", async (e) => {
+  const file = e.target.files && e.target.files[0]; if (!file || !sel) return;
+  if (!file.type.startsWith("image/")) { toast(t("e_image"), true); return; }
+  const id = sel;
+  try { const data = await toAvatar(file); await run(() => store.setPhoto(id, data), t("t_photo_saved")); }
+  catch (err) { console.warn(err); toast(t("e_image_read"), true); }
+});
+function toAvatar(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file); const img = new Image();
+    img.onload = () => {
+      const s = Math.min(img.naturalWidth, img.naturalHeight), out = 320;
+      const c = document.createElement("canvas"); c.width = out; c.height = out;
+      c.getContext("2d").drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, out, out);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL("image/jpeg", 0.82));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("decode")); };
+    img.src = url;
+  });
+}
+
+/* ================= toolbar ================= */
+const openNew = () => { sel = null; panelMode = "new"; renderTree(); renderPanel(); };
+$("#addPersonBtn").onclick = openNew;
+$("#tabAdd").onclick = () => { if (!writable && mode === "server") return openUnlock(); if (focus && people.has(focus) && writable) { select(focus); requestAnimationFrame(() => { const g = body.querySelector(".add-grid"); if (g) g.scrollIntoView({ block: "start", behavior: "smooth" }); }); } else openNew(); };
+$("#searchBtn").onclick = () => {
+  const bar = $(".bar"), on = !bar.classList.contains("searching");
+  bar.classList.toggle("searching", on); $("#searchBtn").setAttribute("aria-expanded", String(on));
+  if (on) qIn.focus(); else { qIn.value = ""; results.hidden = true; }
+};
+$("#ovBtn").onclick = () => (writable ? openNew() : openUnlock());
+function setWritable(v) {
+  writable = v;
+  if (!v && (panelMode !== "view")) { panelMode = "view"; }
+  if (mode === "server" && statusKind === "live") setStatus("live", liveKey());
+  applyWritable(); renderOverlay(); renderFamily(); renderPanel();
+}
+function openUnlock() {
+  const m = $("#unlock"); m.hidden = false; $("#codeIn").value = ""; $("#codeErr").textContent = "";
+  requestAnimationFrame(() => $("#codeIn").focus());
+}
+const closeUnlock = () => { $("#unlock").hidden = true; };
+$("#unCancel").onclick = closeUnlock;
+$("#unlock").addEventListener("click", (e) => { if (e.target.id === "unlock") closeUnlock(); });
+$("#codeIn").addEventListener("input", (e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 6); $("#codeErr").textContent = ""; });
+$("#unlockForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const code = $("#codeIn").value;
+  if (code.length !== 6) { $("#codeErr").textContent = t("code_short"); return; }
+  const btn = e.target.querySelector("button[type=submit]"); btn.disabled = true;
+  try {
+    const r = await fetch("api/unlock", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ code }) });
+    if (r.ok) { closeUnlock(); setWritable(true); toast(t("edit_on")); }
+    else { $("#codeErr").textContent = t(r.status === 429 ? "pass_many" : "code_wrong"); $("#codeIn").select(); }
+  } catch (err) { $("#codeErr").textContent = t("e_generic"); }
+  finally { btn.disabled = false; }
+});
+$("#editBtn").onclick = async () => {
+  if (!writable) return openUnlock();
+  try { await fetch("api/lock", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: "{}" }); } catch (e) {}
+  setWritable(false); toast(t("edit_off"));
+};
+const qIn = $("#q"), results = $("#results");
+function renderResults() {
+  const q = qIn.value.trim().toLowerCase();
+  if (!q) { results.hidden = true; return; }
+  const hit = (p) => ["name", "name_hi", "location", "location_hi", "gotra", "gotra_hi", "birthplace", "birthplace_hi"].some((k) => String(p[k] || "").toLowerCase().includes(q));
+  const hits = [...people.entries()].filter(([, p]) => hit(p)).sort((a, b) => byName(a[0], b[0])).slice(0, 12);
+  results.innerHTML = hits.length ? hits.map(([id, p]) => `<button type="button" data-id="${esc(id)}">${esc(nm(id))}<small>${esc([lifeLine(p), tx(p, "location")].filter(Boolean).join(" · "))}</small></button>`).join("") : `<p>${esc(t("no_match", { q: qIn.value.trim() }))}</p>`;
+  results.hidden = false;
+}
+qIn.addEventListener("input", renderResults);
+qIn.addEventListener("focus", renderResults);
+qIn.addEventListener("keydown", (e) => { if (e.key === "Enter") { const b = results.querySelector("button"); if (b) b.click(); } if (e.key === "Escape") { qIn.value = ""; results.hidden = true; } });
+results.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-id]"); if (!b) return;
+  results.hidden = true; qIn.value = ""; $(".bar").classList.remove("searching"); $("#searchBtn").setAttribute("aria-expanded", "false");
+  if (viewMode === "family" && isPhone()) { closePanel(); setFocus(b.dataset.id); } else { select(b.dataset.id); centerOn(b.dataset.id); }
+});
+document.addEventListener("pointerdown", (e) => { if (!e.target.closest(".search") && !e.target.closest("#searchBtn")) { results.hidden = true; if (!qIn.value) { $(".bar").classList.remove("searching"); $("#searchBtn").setAttribute("aria-expanded", "false"); } } });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#unlock").hidden) { closeUnlock(); return; } if (e.key === "Escape" && !panel.hidden && !e.target.closest("input,textarea,select")) { if (panelMode === "view" || panelMode === "new") closePanel(); else { panelMode = "view"; renderPanel(); } } });
+
+// the app is one fixed screen: when the keyboard closes, undo any page shift the browser made to show a text box
+document.addEventListener("focusout", () => requestAnimationFrame(() => {
+  const a = document.activeElement;
+  if (!(a && a.matches && a.matches("input,textarea,select")) && (window.scrollY || document.documentElement.scrollTop)) window.scrollTo(0, 0);
+}));
+let toastT = 0;
+function toast(msg, err) { const el2 = $("#toast"); el2.textContent = msg; el2.className = "toast" + (err ? " err" : ""); el2.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (el2.hidden = true), err ? 5000 : 2400); }
+
+applyLang();
+setView(viewMode, { top: false });
+applyView();
+boot();
+// names are measured to fit their boxes; measure again once the web fonts have arrived
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { renderTree(); });
+})();
+</script>
