@@ -1,27 +1,20 @@
 <title>Vanshavali Family Tree</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<meta name="color-scheme" content="only light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Tiro+Devanagari+Hindi&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap">
 <style>
 /* Layout: a full-bleed, pannable canvas of generations under a slim top bar; the person card docks right on desktop and rises as a sheet on phones. */
 :root{
-  --bg:#EDF0EB; --surface:#FFFFFF; --surface-2:#F5F7F4; --ink:#1C2624; --muted:#5D6A66; --line:#C8D0CB;
-  --accent:#0D6A62; --accent-ink:#FFFFFF; --accent-soft:#D3E8E3; --knot:#A86A12; --danger:#B3352A;
-  --edge:#76857F; --dot:#D2D9D4;
-  --shadow:0 1px 2px rgba(18,38,33,.08),0 8px 24px rgba(18,38,33,.10);
+  /* always bright and white, even when the phone is in dark mode */
+  --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F4F7F6; --ink:#16201E; --muted:#56635F; --line:#D3DBD7;
+  --accent:#0D6A62; --accent-ink:#FFFFFF; --accent-soft:#DDEFEB; --knot:#A86A12; --danger:#B3352A;
+  --edge:#7A8984; --dot:#E3E9E6;
+  --shadow:0 1px 2px rgba(18,38,33,.06),0 6px 18px rgba(18,38,33,.08);
   --f-display:'Young Serif','Tiro Devanagari Hindi',Georgia,'Times New Roman',serif;
   --f-body:'Source Sans 3','Noto Sans Devanagari',system-ui,-apple-system,'Segoe UI',sans-serif;
-}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#121817; --surface:#1C2422; --surface-2:#18201E; --ink:#E4EBE8; --muted:#98A6A1; --line:#34413D;
-  --accent:#55BBAE; --accent-ink:#0A1412; --accent-soft:#1E3934; --knot:#DDA24A; --danger:#E46C60;
-  --edge:#7D8D88; --dot:#222C29; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;
-}}
-:root[data-theme="dark"]{
-  --bg:#121817; --surface:#1C2422; --surface-2:#18201E; --ink:#E4EBE8; --muted:#98A6A1; --line:#34413D;
-  --accent:#55BBAE; --accent-ink:#0A1412; --accent-soft:#1E3934; --knot:#DDA24A; --danger:#E46C60;
-  --edge:#7D8D88; --dot:#222C29; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;
+  color-scheme:only light;
 }
 [hidden]{display:none!important}
 html,body{height:100%;overflow:hidden}

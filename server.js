@@ -137,8 +137,9 @@ const PAGE_HEAD = '<!doctype html><html lang="en"><head><meta charset="utf-8">' 
   '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' +
   '<meta name="robots" content="noindex,nofollow">' +
   '<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Cpath d=%22M16 3v26M16 11 7 18M16 11l9 7M16 19l-6 5M16 19l6 5%22 stroke=%22%230D6A62%22 stroke-width=%223%22 stroke-linecap=%22round%22 fill=%22none%22/%3E%3C/svg%3E">' +
-  '<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}' +
-  'body{margin:0;font:14px/1.4 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>';
+  '<meta name="color-scheme" content="only light"><meta name="theme-color" content="#ffffff">' +
+  '<style>:root{color-scheme:only light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}' +
+  'body{margin:0;background:#fff;font:14px/1.4 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>';
 const PAGE_TAIL = "</body></html>";
 const APP_FILE = path.join(__dirname, "app", "index.html");
 let pageCache = null;
