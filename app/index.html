@@ -3,7 +3,7 @@
 <meta name="color-scheme" content="only light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Tiro+Devanagari+Hindi&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Noto+Sans+Devanagari:wght@400;500;700&display=swap">
 <style>
 /* Layout: a full-bleed, pannable canvas of generations under a slim top bar; the person card docks right on desktop and rises as a sheet on phones. */
 :root{
@@ -12,8 +12,8 @@
   --accent:#0D6A62; --accent-ink:#FFFFFF; --accent-soft:#DDEFEB; --knot:#A86A12; --danger:#B3352A;
   --edge:#7A8984; --dot:#E3E9E6; --focus-tint:#EEF7F5; --halo:#FFFFFF;
   --shadow:0 1px 2px rgba(18,38,33,.06),0 6px 18px rgba(18,38,33,.08);
-  --f-display:'Young Serif','Tiro Devanagari Hindi',Georgia,'Times New Roman',serif;
-  --f-body:'Source Sans 3','Noto Sans Devanagari',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-display:'Roboto','Noto Sans Devanagari',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-body:'Roboto','Noto Sans Devanagari',system-ui,-apple-system,'Segoe UI',sans-serif;
   color-scheme:only light;
 }
 :root[data-vtheme="dark"]{
@@ -36,7 +36,7 @@ button{-webkit-tap-highlight-color:transparent}
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   background:var(--surface);border-bottom:1px solid var(--line);position:relative;z-index:5}
 .brand{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto;margin-right:auto}
-.brand h1{font-family:var(--f-display);font-weight:400;font-size:21px;line-height:1.35;margin:0;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand h1{font-family:var(--f-display);font-weight:700;font-size:20px;line-height:1.35;margin:0;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .status{font-size:12px;line-height:1.4;color:var(--muted);display:flex;align-items:center;gap:6px;min-width:0;padding-left:36px}
 .brand-row{display:flex;align-items:center;gap:8px;min-width:0}
 .emblem{width:28px;height:28px;flex:none}
@@ -64,7 +64,7 @@ button{-webkit-tap-highlight-color:transparent}
 .lockbtn.on .ic-locked{display:none}
 .modal{position:fixed;inset:0;z-index:40;background:rgba(10,20,18,.45);display:grid;place-items:center;padding:16px}
 .modal-box{width:100%;max-width:360px;background:var(--surface);border-radius:16px;padding:22px 20px;display:grid;gap:12px;box-shadow:var(--shadow)}
-.modal-box h2{font-family:var(--f-display);font-weight:400;font-size:22px;line-height:1.3;margin:0}
+.modal-box h2{font-family:var(--f-display);font-weight:500;font-size:22px;line-height:1.3;margin:0}
 .modal-box p{margin:0;color:var(--muted);font-size:14.5px}
 #codeIn{width:100%;font-size:28px!important;letter-spacing:.35em;text-align:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);font-variant-numeric:tabular-nums}
 #codeIn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
@@ -125,7 +125,7 @@ button{-webkit-tap-highlight-color:transparent}
 
 .overlay{position:absolute;inset:0;display:grid;place-items:center;padding:24px;z-index:2;pointer-events:none}
 .overlay .box{pointer-events:auto;max-width:420px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px 26px;box-shadow:var(--shadow);display:grid;gap:12px;justify-items:center}
-.overlay h2{font-family:var(--f-display);font-weight:400;font-size:24px;margin:0;text-wrap:balance}
+.overlay h2{font-family:var(--f-display);font-weight:500;font-size:24px;margin:0;text-wrap:balance}
 .overlay p{margin:0;color:var(--muted)}
 .mini-tree{width:160px;height:84px}
 #passForm{display:grid;gap:10px;width:100%;max-width:280px}
@@ -178,7 +178,7 @@ button{-webkit-tap-highlight-color:transparent}
 .focus{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:16px;border:2px solid var(--accent);border-radius:18px;background:linear-gradient(180deg,var(--focus-tint) 0%,var(--surface) 62%);box-shadow:0 2px 4px rgba(13,106,98,.06),0 12px 28px rgba(13,106,98,.12)}
 .focus .fav{box-shadow:0 0 0 4px var(--halo),0 0 0 6px var(--accent-soft)}
 .focus .fav{width:84px;height:84px}
-.focus h2{font-family:var(--f-display);font-weight:400;font-size:24px;line-height:1.3;margin:0;overflow-wrap:anywhere}
+.focus h2{font-family:var(--f-display);font-weight:500;font-size:24px;line-height:1.3;margin:0;overflow-wrap:anywhere}
 .focus .alt{margin:2px 0 0;font-size:15px;line-height:1.4;overflow-wrap:anywhere;opacity:.8}
 .focus .meta{margin:4px 0 0;font-size:13.5px;line-height:1.4;color:var(--muted)}
 .focus .cta{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
@@ -246,7 +246,7 @@ button{-webkit-tap-highlight-color:transparent}
 .mini .pav .ini{font-size:12px}
 .chip .dot .ini{font-size:9.5px}
 .avatar svg{width:60%;height:60%}
-.head h2{font-family:var(--f-display);font-weight:400;font-size:23px;line-height:1.2;margin:0;text-wrap:balance;overflow-wrap:anywhere}
+.head h2{font-family:var(--f-display);font-weight:500;font-size:23px;line-height:1.2;margin:0;text-wrap:balance;overflow-wrap:anywhere}
 .head .alt{margin:2px 0 0;font-size:15px;color:var(--ink);opacity:.8;overflow-wrap:anywhere}
 .head .meta{margin:4px 0 0;color:var(--muted);font-size:13.5px}
 .x{width:36px;height:36px;border-radius:8px;border:0;background:transparent;cursor:pointer;font-size:20px;color:var(--muted);align-self:start}
@@ -308,7 +308,7 @@ fieldset[data-pick] .check:has(input:checked){border-color:var(--accent);backgro
 .form-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;position:sticky;bottom:0;z-index:2;background:var(--surface);margin:0 calc(-1 * var(--pi)) -28px;padding:12px var(--pi) calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
 .form-actions .btn{min-height:44px}
 .form-actions .spacer{flex:1}
-.ftitle{font-family:var(--f-display);font-weight:400;font-size:21px;margin:0;overflow-wrap:anywhere}
+.ftitle{font-family:var(--f-display);font-weight:500;font-size:21px;margin:0;overflow-wrap:anywhere}
 .form-err{color:var(--danger);font-size:13.5px;margin:0}
 
 .toast{position:absolute;left:50%;transform:translateX(-50%);top:12px;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:14px;z-index:30;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
@@ -576,7 +576,7 @@ const NAME_W = NODE_W - 70, LINE_H = 17;
 const measureCtx = document.createElement("canvas").getContext("2d");
 const graphemes = (w) => (typeof Intl !== "undefined" && Intl.Segmenter) ? [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(w)].map((x) => x.segment) : [...w];
 function wrapName(text, maxW) {
-  measureCtx.font = "700 14px 'Source Sans 3','Noto Sans Devanagari',system-ui,sans-serif";
+  measureCtx.font = "700 14px 'Roboto','Noto Sans Devanagari',system-ui,sans-serif";
   const fits = (s2) => measureCtx.measureText(s2).width <= maxW;
   const lines = []; let cur = "";
   for (const w of String(text).split(/\s+/).filter(Boolean)) {
