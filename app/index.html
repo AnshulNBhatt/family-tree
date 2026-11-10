@@ -7,14 +7,21 @@
 <style>
 /* Layout: a full-bleed, pannable canvas of generations under a slim top bar; the person card docks right on desktop and rises as a sheet on phones. */
 :root{
-  /* always bright and white, even when the phone is in dark mode */
+  /* white by default, whatever the phone's own setting; dark only when chosen in the app */
   --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F4F7F6; --ink:#16201E; --muted:#56635F; --line:#D3DBD7;
   --accent:#0D6A62; --accent-ink:#FFFFFF; --accent-soft:#DDEFEB; --knot:#A86A12; --danger:#B3352A;
-  --edge:#7A8984; --dot:#E3E9E6;
+  --edge:#7A8984; --dot:#E3E9E6; --focus-tint:#EEF7F5; --halo:#FFFFFF;
   --shadow:0 1px 2px rgba(18,38,33,.06),0 6px 18px rgba(18,38,33,.08);
   --f-display:'Young Serif','Tiro Devanagari Hindi',Georgia,'Times New Roman',serif;
   --f-body:'Source Sans 3','Noto Sans Devanagari',system-ui,-apple-system,'Segoe UI',sans-serif;
   color-scheme:only light;
+}
+:root[data-vtheme="dark"]{
+  --bg:#111716; --surface:#1B2321; --surface-2:#161D1C; --ink:#E6ECEA; --muted:#9BA9A4; --line:#33403C;
+  --accent:#5CC2B4; --accent-ink:#08201C; --accent-soft:#1D3833; --knot:#E0A84E; --danger:#EC7468;
+  --edge:#7F8F8A; --dot:#1F2826; --focus-tint:#18302C; --halo:#1B2321;
+  --shadow:0 1px 2px rgba(0,0,0,.45),0 6px 18px rgba(0,0,0,.35);
+  color-scheme:dark;
 }
 [hidden]{display:none!important}
 html,body{height:100%;overflow:hidden}
@@ -47,6 +54,10 @@ button{-webkit-tap-highlight-color:transparent}
 .icon-btn[aria-expanded="true"]{background:var(--accent-soft);border-color:var(--accent)}
 .lockbtn{display:inline-flex;width:auto;min-width:44px;gap:6px;padding:0 12px;font-weight:700;font-size:13.5px;color:var(--ink)}
 .lockbtn[hidden]{display:none!important}
+.themebtn{display:inline-flex}
+.themebtn .ic-sun{display:none}
+:root[data-vtheme="dark"] .themebtn .ic-sun{display:block}
+:root[data-vtheme="dark"] .themebtn .ic-moon{display:none}
 .lockbtn .ic-open{display:none}
 .lockbtn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .lockbtn.on .ic-open{display:block;stroke:var(--accent)}
@@ -164,8 +175,8 @@ button{-webkit-tap-highlight-color:transparent}
 .pcard.add .pname{color:var(--accent);font-size:14.5px}
 .vline{width:2px;height:24px;background:var(--edge);margin:0 auto}
 .gap{height:22px}
-.focus{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:16px;border:2px solid var(--accent);border-radius:18px;background:linear-gradient(180deg,#EEF7F5 0%,var(--surface) 62%);box-shadow:0 2px 4px rgba(13,106,98,.06),0 12px 28px rgba(13,106,98,.12)}
-.focus .fav{box-shadow:0 0 0 4px #fff,0 0 0 6px var(--accent-soft)}
+.focus{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:16px;border:2px solid var(--accent);border-radius:18px;background:linear-gradient(180deg,var(--focus-tint) 0%,var(--surface) 62%);box-shadow:0 2px 4px rgba(13,106,98,.06),0 12px 28px rgba(13,106,98,.12)}
+.focus .fav{box-shadow:0 0 0 4px var(--halo),0 0 0 6px var(--accent-soft)}
 .focus .fav{width:84px;height:84px}
 .focus h2{font-family:var(--f-display);font-weight:400;font-size:24px;line-height:1.3;margin:0;overflow-wrap:anywhere}
 .focus .alt{margin:2px 0 0;font-size:15px;line-height:1.4;overflow-wrap:anywhere;opacity:.8}
@@ -308,6 +319,11 @@ fieldset[data-pick] .check:has(input:checked){border-color:var(--accent);backgro
   .panel{animation:slide .18s ease-out}
   @keyframes slide{from{transform:translateX(16px);opacity:.6}to{transform:none;opacity:1}}
 }
+/* phones: the language switch is one button that shows the other language, to leave room for the title */
+@media (max-width:720px){
+  .lang button[aria-pressed="true"]{display:none}
+  .lang button{min-height:42px;min-width:44px;padding:0 10px;color:var(--accent)}
+}
 /* small phones (320-380px wide): drop the emblem and tighten the header so everything fits */
 .bar{min-width:0}
 @media (max-width:380px){
@@ -315,9 +331,13 @@ fieldset[data-pick] .check:has(input:checked){border-color:var(--accent);backgro
   .status{padding-left:0}
   .bar{gap:6px}
   .seg button{padding:0 9px;min-width:38px}
-  .icon-btn,.lockbtn{width:42px;height:42px;min-width:42px}
+  .icon-btn,.lockbtn{width:40px;height:40px;min-width:40px}
+  .lang button{min-height:40px;min-width:40px;padding:0 8px}
+  .bar{gap:5px}
+  .brand h1{font-size:17.5px}
 }
 </style>
+<script>try { if (localStorage.getItem("vanshavali-theme") === "dark") document.documentElement.setAttribute("data-vtheme", "dark"); } catch (e) {}</script>
 
 <div class="app">
   <header class="bar">
@@ -329,6 +349,7 @@ fieldset[data-pick] .check:has(input:checked){border-color:var(--accent);backgro
       <button type="button" data-view="family" data-t="view_family"></button>
       <button type="button" data-view="tree" data-t="view_tree"></button>
     </div>
+    <button class="icon-btn themebtn" id="themeBtn" type="button"><svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg><svg class="ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"></path></svg></button>
     <div class="seg lang" role="group" aria-label="Language / भाषा">
       <button type="button" data-lang="en" aria-pressed="true">EN</button>
       <button type="button" data-lang="hi" aria-pressed="false" lang="hi">हिं</button>
@@ -424,6 +445,7 @@ const STR = {
     edit_word: "Edit", editing_word: "Editing", tab_edit: "Edit", e_edit_required: "Enter the edit code to make changes.",
     view_only_note: "You're viewing. Have the edit code?", empty_locked: "No one has been added yet. Enter the edit code to start the tree.",
     st_live_view: "Live · view only", st_live_edit: "Live · editing on",
+    theme_dark: "Switch to dark theme", theme_light: "Switch to light theme",
     late: "Late", backup_dl: "Download a backup of the whole tree", backup_note: "Keeps a copy of everyone, including photos, on this phone or computer.",
     view_family: "Family", view_tree: "Tree", tab_add: "Add", search: "Search", back: "Back", back_to: "Back to {n}",
     full_details: "Details & relatives", see_in_tree: "See in tree", edit_short: "Edit",
@@ -486,6 +508,7 @@ const STR = {
     edit_word: "बदलें", editing_word: "बदलाव चालू", tab_edit: "बदलें", e_edit_required: "बदलाव के लिए कोड डालें।",
     view_only_note: "आप केवल देख रहे हैं। बदलाव का कोड है?", empty_locked: "अभी तक कोई नहीं जोड़ा गया है। वृक्ष शुरू करने के लिए बदलाव का कोड डालें।",
     st_live_view: "लाइव · केवल देखना", st_live_edit: "लाइव · बदलाव चालू",
+    theme_dark: "डार्क थीम चालू करें", theme_light: "सफ़ेद (लाइट) थीम चालू करें",
     late: "स्वर्गीय", backup_dl: "पूरे वृक्ष का बैकअप डाउनलोड करें", backup_note: "सभी लोगों और फ़ोटो की एक कॉपी इस फ़ोन या कंप्यूटर में रख लें।",
     view_family: "परिवार", view_tree: "वृक्ष", tab_add: "जोड़ें", search: "खोजें", back: "वापस", back_to: "{n} पर वापस",
     full_details: "विवरण और रिश्तेदार", see_in_tree: "वृक्ष में देखें", edit_short: "बदलें",
@@ -881,7 +904,7 @@ function applyLang() {
   $("#statusText").textContent = t(statusKey);
   $("#searchBtn").setAttribute("aria-label", t("search")); $("#searchBtn").title = t("search");
   $("#viewTog").setAttribute("aria-label", t("view_family") + " / " + t("view_tree"));
-  renderOverlay(); rebuildIndex(); renderTree(); renderFamily(); renderPanel(); renderResults(); applyWritable();
+  renderOverlay(); rebuildIndex(); renderTree(); renderFamily(); renderPanel(); renderResults(); applyWritable(); applyThemeButton();
 }
 /* ---------- views ---------- */
 function setView(v, opts = {}) {
@@ -1379,7 +1402,9 @@ function select(id) {
 function closePanel() { sel = null; panelMode = "view"; showPanel(false); renderTree(); }
 /* each person gets their initials on one of a few soft colours (the same colour every time) */
 const AV_TONES = [["#DDEFEB", "#0B5E57"], ["#F7E9D4", "#7D5210"], ["#E2E8F7", "#33488A"], ["#F5E1E7", "#863650"], ["#E5F0D8", "#456320"], ["#ECE3F5", "#5B3D85"]];
-function avTone(id) { let h = 0; for (const c of String(id)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return AV_TONES[h % AV_TONES.length]; }
+const AV_TONES_DARK = [["#173B37", "#A3E3D9"], ["#3B2C15", "#F1CB8D"], ["#1F2A47", "#B3C5F6"], ["#3D2029", "#F3B3C6"], ["#25351A", "#C2DF9A"], ["#2E2342", "#D0BAF2"]];
+const isDark = () => document.documentElement.getAttribute("data-vtheme") === "dark";
+function avTone(id) { let h = 0; for (const c of String(id)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return (isDark() ? AV_TONES_DARK : AV_TONES)[h % AV_TONES.length]; }
 function initials(id) {
   const words = nm(id).replace(/\(.*?\)/g, " ").replace(/^(shri|smt|shrimati|late|dr|श्री|श्रीमती|स्व\.?|स्वर्गीय|डॉ\.?)\s+/i, "").trim().split(/\s+/).filter(Boolean);
   if (!words.length) return "?";
@@ -1712,6 +1737,17 @@ $("#searchBtn").onclick = () => {
   if (on) qIn.focus(); else { qIn.value = ""; results.hidden = true; }
 };
 $("#ovBtn").onclick = () => (writable ? openNew() : openUnlock());
+function applyThemeButton() {
+  const b = $("#themeBtn"), dark = isDark();
+  b.setAttribute("aria-label", t(dark ? "theme_light" : "theme_dark")); b.title = t(dark ? "theme_light" : "theme_dark");
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", dark ? "#111716" : "#ffffff");
+}
+$("#themeBtn").onclick = () => {
+  const dark = !isDark();
+  if (dark) document.documentElement.setAttribute("data-vtheme", "dark"); else document.documentElement.removeAttribute("data-vtheme");
+  try { localStorage.setItem("vanshavali-theme", dark ? "dark" : "light"); } catch (e) {}
+  applyThemeButton(); renderTree(); renderFamily(); renderPanel();
+};
 function setWritable(v) {
   writable = v;
   if (!v && (panelMode !== "view")) { panelMode = "view"; }
