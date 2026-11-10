@@ -207,6 +207,17 @@ async function handle(req, res) {
   if ((m === "PUT" || m === "DELETE" || m === "POST") && !canEdit(req)) return send(res, 403, { error: "edit_code_required" });
 
   if (p === "/api/state" && m === "GET") return send(res, 200, state);
+  // a complete copy (people, relationships and photos) for editors to keep
+  if (p === "/api/export" && m === "GET") {
+    if (!canEdit(req)) return send(res, 403, { error: "edit_code_required" });
+    const photoData = {};
+    for (const id of Object.keys(state.photos)) {
+      try { photoData[id] = "data:image/jpeg;base64," + (await fs.promises.readFile(path.join(PHOTO_DIR, id + ".jpg"))).toString("base64"); } catch (e) {}
+    }
+    const day = new Date().toISOString().slice(0, 10);
+    return send(res, 200, JSON.stringify({ app: "vanshavali", version: 1, exportedAt: new Date().toISOString(), people: state.people, relations: state.relations, photos: photoData }), "application/json; charset=utf-8",
+      { "Content-Disposition": `attachment; filename="vanshavali-backup-${day}.json"` });
+  }
   if (p === "/api/events" && m === "GET") {
     res.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-store", "X-Accel-Buffering": "no", Connection: "keep-alive", ...SECURITY_HEADERS });
     res.write("retry: 3000\n\n");
